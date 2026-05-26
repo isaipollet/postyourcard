@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { signSession, SESSION_MAX_AGE_SECONDS } from "@/lib/admin-auth";
 

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { uploadCroppedImage } from "@/lib/cloudinary-server";
 import { z } from "zod";
