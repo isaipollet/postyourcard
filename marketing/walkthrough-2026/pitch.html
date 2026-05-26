@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>PostYourCard — De klantreis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #6B1F2A;
+    --burgundy-deep: #4A1118;
+    --gold: #C9963A;
+    --cream: #FAF6EE;
+    --cream-warm: #FFFBF0;
+    --ink: #1a1a1a;
+    --sand: #d8cfb8;
+    --sand-soft: #ebe2cc;
+    --muted: #6b6b6b;
+  }
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: #2a2a2a; -webkit-font-smoothing: antialiased; }
+
+  .slide {
+    width: 297mm;
+    height: 210mm;
+    margin: 16mm auto;
+    background: var(--cream);
+    box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+    padding: 20mm 22mm 22mm;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+  }
+  @media print {
+    html, body { background: white; }
+    .slide { margin: 0; box-shadow: none; }
+  }
+
+  /* ─── BRAND ───────────────────────────── */
+  .brand-mark {
+    position: absolute;
+    top: 12mm; left: 16mm;
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14pt; font-weight: 500;
+    color: var(--burgundy);
+  }
+  .brand-mark .logo-tile {
+    width: 28px; height: 28px;
+    background: var(--burgundy); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(107,31,42,0.25);
+  }
+  .brand-mark .logo-tile svg { width: 17px; height: 17px; color: var(--cream); }
+  .slide-number {
+    position: absolute; bottom: 12mm; right: 16mm;
+    font-size: 8pt; color: var(--burgundy); opacity: 0.55;
+    letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600;
+  }
+
+  /* ─── COVER ───────────────────────────── */
+  .cover {
+    background: radial-gradient(ellipse at 80% 20%, rgba(201,150,58,0.20) 0%, transparent 50%),
+                linear-gradient(135deg, var(--burgundy-deep) 0%, var(--burgundy) 100%);
+    color: white;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .cover .brand-mark { color: white; }
+  .cover .brand-mark .logo-tile { background: var(--gold); }
+  .cover .brand-mark .logo-tile svg { color: var(--burgundy-deep); }
+  .cover .eyebrow {
+    text-transform: uppercase; letter-spacing: 0.32em;
+    font-size: 9pt; color: var(--gold); margin-bottom: 18px; font-weight: 600;
+  }
+  .cover h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80pt; line-height: 0.95;
+    margin: 0 0 28px; font-weight: 500;
+  }
+  .cover h1 em { font-style: italic; color: var(--gold); }
+  .cover .subtitle {
+    font-size: 17pt; color: rgba(255,255,255,0.85);
+    font-family: 'Cormorant Garamond', serif; max-width: 500px;
+  }
+
+  /* ─── STEP SLIDE GRID ──────────────────── */
+  .step-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 12mm;
+    flex: 1;
+    align-items: center;
+    margin-top: 12mm;
+  }
+  .step-text { padding-top: 4mm; }
+  .step-text .eyebrow {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13pt; font-weight: 500;
+    color: var(--gold);
+    letter-spacing: 0.3em; text-transform: uppercase;
+    margin-bottom: 10mm;
+    padding-bottom: 4mm;
+    border-bottom: 1.5px solid var(--gold);
+  }
+  .step-text h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38pt; line-height: 1.05;
+    color: var(--burgundy);
+    margin: 0 0 6mm; font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+  .step-text h2 em { font-style: italic; }
+  .step-text .lead {
+    font-size: 13pt; color: var(--ink);
+    line-height: 1.55; margin: 0 0 8mm;
+    max-width: 130mm;
+  }
+  .step-text ul { list-style: none; padding: 0; margin: 0; }
+  .step-text li {
+    font-size: 11pt; line-height: 1.55;
+    padding: 6px 0 6px 22px;
+    position: relative;
+    color: var(--muted);
+  }
+  .step-text li::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--gold); border-radius: 50%;
+    position: absolute; left: 6px; top: 14px;
+  }
+  .step-text li strong { color: var(--burgundy); font-weight: 600; }
+
+  /* ─── SCAN PHOTO (real-world image, no phone frame) ──── */
+  .scan-photo {
+    position: relative;
+    width: 100%;
+    max-width: 100mm;
+    aspect-ratio: 3 / 4;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow:
+      0 35px 70px rgba(107,31,42,0.20),
+      0 10px 24px rgba(0,0,0,0.15);
+    transform: rotate(-2deg);
+  }
+  .scan-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* ─── PHONE MOCKUP ─────────────────────── */
+  .step-phone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+  }
+  .phone-mockup {
+    position: relative;
+    height: 158mm;
+    aspect-ratio: 390 / 844;
+    background: linear-gradient(145deg, #2a2a2a 0%, #0a0a0a 100%);
+    border-radius: 22px;
+    padding: 6px;
+    box-shadow:
+      0 40px 80px rgba(107,31,42,0.18),
+      0 12px 30px rgba(0,0,0,0.18),
+      inset 0 0 0 1.5px #3a3a3a;
+    transform: rotate(-2deg);
+  }
+  .phone-mockup::before {
+    content: '';
+    position: absolute;
+    top: 11px; left: 50%;
+    transform: translateX(-50%);
+    width: 36%; height: 14px;
+    background: #050505;
+    border-radius: 8px;
+    z-index: 10;
+  }
+  .phone-screen {
+    width: 100%; height: 100%;
+    border-radius: 17px;
+    overflow: hidden;
+    background: var(--cream);
+    position: relative;
+  }
+  .phone-screen img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+  }
+  /* subtle shadow under phone */
+  .phone-mockup::after {
+    content: '';
+    position: absolute;
+    bottom: -16px; left: 10%;
+    width: 80%; height: 14px;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.20) 0%, transparent 70%);
+    filter: blur(6px);
+    z-index: -1;
+  }
+
+  /* footer ribbon visible on each step slide */
+  .footer-ribbon {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 8mm;
+    background: linear-gradient(90deg, var(--burgundy) 0%, var(--burgundy-deep) 100%);
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="pyc-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2.5"/>
+      <path d="M2 8h20"/>
+      <rect x="14.5" y="10.5" width="5" height="4" rx="0.6" stroke-dasharray="2 1.4"/>
+      <line x1="4.5" y1="14" x2="11" y2="14"/>
+      <line x1="4.5" y1="16.5" x2="9" y2="16.5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ═══ 1 — COVER ═════════════════════════════ -->
+<section class="slide cover">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <div>
+    <p class="eyebrow">De klantreis · Voorjaar 2026</p>
+    <h1>Hoe het<br/><em>werkt</em>.</h1>
+    <p class="subtitle">Van QR-scan tot postkaart in de bus —<br/>elke stap die de festivalbezoeker doorloopt.</p>
+  </div>
+  <div class="slide-number" style="color: rgba(255,255,255,0.5);">01 / 07</div>
+</section>
+
+<!-- ═══ 2 — SCAN (real-world photo) ═══════════ -->
+<section class="slide">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <div class="step-grid">
+    <div class="step-text">
+      <span class="eyebrow">Stap 01 · Scan</span>
+      <h2>Bezoeker scant<br/>de <em>QR-code</em>.</h2>
+      <p class="lead">Op een toegangsbandje, festivalflyer of bord op de site. Eén tap met de camera-app en de bezoeker is in de PostYourCard-flow. Geen app, geen download, geen account.</p>
+      <ul>
+        <li><strong>QR overal plaatsbaar</strong> — entree, food court, toiletten, lounge.</li>
+        <li><strong>Werkt op elke smartphone</strong> — iOS, Android, in elke taal.</li>
+        <li><strong>Direct in de browser</strong> — geen frictie, geen wachttijd.</li>
+      </ul>
+    </div>
+    <div class="step-phone">
+      <div class="scan-photo">
+        <img src="images/step-scan.jpg" alt="Bezoeker scant QR-code"/>
+      </div>
+    </div>
+  </div>
+  <div class="footer-ribbon"></div>
+  <div class="slide-number">02 / 07</div>
+</section>
+
+<!-- ═══ 3 — LANDING ═══════════════════════════ -->
+<section class="slide">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <div class="step-grid">
+    <div class="step-text">
+      <span class="eyebrow">Stap 02 · Formaat</span>
+      <h2>Kiest het<br/><em>formaat</em>.</h2>
+      <p class="lead">Bezoeker landt op de co-branded festival-pagina en kiest tussen standaard of panoramic. Hero-foto van het festival, taalkeuze, branding van de partner.</p>
+      <ul>
+        <li><strong>Co-branded landing</strong> met festival/sponsor-logo en hero-foto.</li>
+        <li><strong>5 talen</strong> — automatisch op apparaat-taal of handmatig.</li>
+        <li><strong>Twee formaten</strong> — standaard 10×15cm of panoramic 10×21cm.</li>
+      </ul>
+    </div>
+    <div class="step-phone">
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <img src="images/01-landing.png" alt="Landing page"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-ribbon"></div>
+  <div class="slide-number">03 / 07</div>
+</section>
+
+<!-- ═══ 3 — UPLOAD + CROP ═════════════════════ -->
+<section class="slide">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <div class="step-grid">
+    <div class="step-text">
+      <span class="eyebrow">Stap 03 · Foto</span>
+      <h2>Kies een foto<br/>van het <em>moment</em>.</h2>
+      <p class="lead">Bezoeker uploadt een foto vanuit de camera-rol of maakt direct een nieuwe shot. Crop-frame met live preview op het juiste postkaart-formaat.</p>
+      <ul>
+        <li><strong>Camera capture</strong> ingebouwd — geen app-switch nodig.</li>
+        <li><strong>Live crop-frame</strong> versleepbaar, op de juiste aspect-ratio.</li>
+        <li><strong>350 gsm offset-kwaliteit</strong> automatisch toegepast bij upload.</li>
+      </ul>
+    </div>
+    <div class="step-phone">
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <img src="images/02-crop.png" alt="Foto crop"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-ribbon"></div>
+  <div class="slide-number">04 / 07</div>
+</section>
+
+<!-- ═══ 4 — MESSAGE ═══════════════════════════ -->
+<section class="slide">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <div class="step-grid">
+    <div class="step-text">
+      <span class="eyebrow">Stap 04 · Bericht</span>
+      <h2>Schrijf een<br/><em>persoonlijke</em> tekst.</h2>
+      <p class="lead">Handgeschreven look in 4 stijlen — Casual, Print, Cursive of Pen. De ontvanger krijgt een kaart die er écht persoonlijk uitziet.</p>
+      <ul>
+        <li><strong>4 handschrift-fonts</strong> om uit te kiezen.</li>
+        <li><strong>Live preview</strong> van hoe de boodschap op de kaart komt.</li>
+        <li><strong>300 tekens</strong> ruimte — kort en krachtig.</li>
+      </ul>
+    </div>
+    <div class="step-phone">
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <img src="images/03-message.png" alt="Bericht schrijven"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-ribbon"></div>
+  <div class="slide-number">05 / 07</div>
+</section>
+
+<!-- ═══ 5 — ADDRESS ═══════════════════════════ -->
+<section class="slide">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <div class="step-grid">
+    <div class="step-text">
+      <span class="eyebrow">Stap 05 · Adres</span>
+      <h2>Voor wie?<br/><em>Wereldwijd</em>.</h2>
+      <p class="lead">Adres invullen, e-mail voor bevestiging, en klaar. Wij printen en verzenden binnen 24u — overal ter wereld, verzending inbegrepen.</p>
+      <ul>
+        <li><strong>Wereldwijde verzending</strong> inbegrepen in de prijs.</li>
+        <li><strong>Address auto-completion</strong> — minder typwerk op mobile.</li>
+        <li><strong>Aankomst 5–10 dagen</strong> later in de bus.</li>
+      </ul>
+    </div>
+    <div class="step-phone">
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <img src="images/04-address.png" alt="Adres invullen"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-ribbon"></div>
+  <div class="slide-number">06 / 07</div>
+</section>
+
+<!-- ═══ 6 — CHECKOUT ══════════════════════════ -->
+<section class="slide">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <div class="step-grid">
+    <div class="step-text">
+      <span class="eyebrow">Stap 06 · Betalen</span>
+      <h2>Eén tap, en<br/>de kaart is <em>onderweg</em>.</h2>
+      <p class="lead">Veilige betaling via Stripe — kaart, Apple Pay, Google Pay, Bancontact. €7.99 inclusief wereldwijde verzending. Bevestiging direct in de mailbox.</p>
+      <ul>
+        <li><strong>Stripe Elements</strong> — alle Europese betaalmethoden.</li>
+        <li><strong>Onmiddelijke bevestiging</strong> per e-mail.</li>
+        <li><strong>Order tracking</strong> via uniek referentie-nummer.</li>
+      </ul>
+    </div>
+    <div class="step-phone">
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <img src="images/05-checkout.png" alt="Checkout"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-ribbon"></div>
+  <div class="slide-number">07 / 07</div>
+</section>
+
+</body>
+</html>

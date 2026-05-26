@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="77" fill="#0F6E56"/>
+  <rect x="156" y="102" width="200" height="140" rx="14" fill="#FFFDF9" opacity="0.9"/>
+  <line x1="156" y1="102" x2="256" y2="182" stroke="#0F6E56" stroke-width="6"/>
+  <line x1="356" y1="102" x2="256" y2="182" stroke="#0F6E56" stroke-width="6"/>
+  <text x="256" y="400" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="102" fill="#FFFDF9">PYC</text>
+</svg>

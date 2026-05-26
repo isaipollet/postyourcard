@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* react-image-crop */
+@import "react-image-crop/dist/ReactCrop.css";
+
+:root {
+  --background: #FAF6EE;
+  --foreground: #1C1712;
+  --teal: #6B1F2A;
+  --gold: #C9963A;
+  --sand-200: #EFE8D5;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  background-image:
+    /* Faint gold grid — same as Bruges Audio Tour, gives that "postcard paper" texture */
+    repeating-linear-gradient(90deg, rgba(201, 150, 58, 0.04) 0px, rgba(201, 150, 58, 0.04) 1px, transparent 1px, transparent 80px),
+    repeating-linear-gradient(0deg, rgba(201, 150, 58, 0.04) 0px, rgba(201, 150, 58, 0.04) 1px, transparent 1px, transparent 80px),
+    /* Warm radial accents — burgundy + gold pools of color */
+    radial-gradient(ellipse 60% 80% at 80% 50%, rgba(107, 31, 42, 0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(201, 150, 58, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 0%, rgba(107, 31, 42, 0.04) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  /* Tabular numbers for consistent price alignment */
+  .font-heading {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Focus-visible rings — teal, accessible */
+  *:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+
+  /* Remove default outline so only focus-visible triggers */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+
+@layer components {
+  /* Page fade-in animation */
+  .page-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  /* Lined paper effect for postcard message textarea */
+  .textarea-lined {
+    background-image: repeating-linear-gradient(
+      transparent,
+      transparent 27px,
+      var(--sand-200) 27px,
+      var(--sand-200) 28px
+    );
+    background-position: 0 8px;
+    line-height: 28px;
+    padding-top: 8px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(107, 31, 42, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(107, 31, 42, 0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

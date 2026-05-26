@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>PostYourCard × De Binnenstad — Festival Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Caveat:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #6B1F2A;
+    --burgundy-deep: #4A1118;
+    --gold: #C9963A;
+    --cream: #FAF6EE;
+    --cream-warm: #FFFBF0;
+    --ink: #1a1a1a;
+    --paper: #fdfaf3;
+    --sand: #d8cfb8;
+    --sand-soft: #ebe2cc;
+    --muted: #6b6b6b;
+  }
+
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    background: #2a2a2a;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .slide {
+    width: 297mm;
+    height: 210mm;
+    margin: 16mm auto;
+    background: var(--cream);
+    box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+    padding: 20mm 22mm 22mm;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media print {
+    html, body { background: white; }
+    .slide { margin: 0; box-shadow: none; }
+  }
+
+  .slide-number {
+    position: absolute;
+    bottom: 12mm;
+    right: 16mm;
+    font-size: 8pt;
+    color: var(--burgundy);
+    opacity: 0.55;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* ─── BRAND MARK / LOGO ─────────────────── */
+  .brand-mark {
+    position: absolute;
+    top: 12mm;
+    left: 16mm;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14pt;
+    font-weight: 500;
+    color: var(--burgundy);
+    letter-spacing: 0.005em;
+  }
+  .brand-mark .logo-tile {
+    width: 28px;
+    height: 28px;
+    background: var(--burgundy);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(107,31,42,0.25);
+  }
+  .brand-mark .logo-tile svg {
+    width: 17px;
+    height: 17px;
+    color: var(--cream);
+  }
+
+  /* ─── COVER ────────────────────────────── */
+  .cover {
+    background:
+      radial-gradient(ellipse at 80% 20%, rgba(201,150,58,0.20) 0%, transparent 50%),
+      linear-gradient(135deg, var(--burgundy-deep) 0%, var(--burgundy) 100%);
+    color: white;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .cover .brand-mark { color: white; }
+  .cover .brand-mark .logo-tile {
+    background: var(--gold);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .cover .brand-mark .logo-tile svg { color: var(--burgundy-deep); }
+  .cover .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.32em;
+    font-size: 9pt;
+    color: var(--gold);
+    margin-bottom: 18px;
+    font-weight: 600;
+  }
+  .cover h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80pt;
+    line-height: 0.95;
+    margin: 0 0 28px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .cover h1 em { font-style: italic; color: var(--gold); }
+  .cover .partners {
+    margin-top: 32px;
+    font-size: 17pt;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .cover .partners span {
+    color: var(--gold);
+    margin: 0 18px;
+  }
+  .cover .meta {
+    position: absolute;
+    bottom: 14mm;
+    left: 16mm;
+    font-size: 8pt;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* ─── HEADINGS ─────────────────────────── */
+  .slide h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40pt;
+    line-height: 1.05;
+    color: var(--burgundy);
+    margin: 6mm 0 5mm;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+  .slide h2 em { font-style: italic; }
+  .slide .lead {
+    font-size: 12pt;
+    color: var(--muted);
+    margin: 0 0 7mm;
+    max-width: 195mm;
+    line-height: 1.5;
+  }
+  .slide h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22pt;
+    color: var(--burgundy);
+    margin: 0 0 6px;
+    font-weight: 500;
+  }
+  .slide p { font-size: 10.5pt; line-height: 1.55; margin: 0; color: var(--ink); }
+  .slide ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .slide li {
+    font-size: 11pt;
+    line-height: 1.55;
+    padding: 9px 0 9px 26px;
+    position: relative;
+    color: var(--ink);
+  }
+  .slide li::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: absolute;
+    left: 6px;
+    top: 17px;
+  }
+  .slide li strong { color: var(--burgundy); font-weight: 600; }
+
+  /* ─── 3-STEP ROW WITH SVG ICONS ────────── */
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16mm;
+    margin-top: 4mm;
+    flex: 1;
+    align-content: start;
+  }
+  .step-icon {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: white;
+    border: 1.5px solid var(--sand);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(107,31,42,0.10);
+    position: relative;
+  }
+  .step-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  .step-icon.illustration {
+    background: linear-gradient(180deg, #FFFEF9 0%, #FAF6EE 100%);
+  }
+  .step-icon.illustration svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .step-icon.illustration .step-corner-num {
+    background: var(--burgundy);
+    color: var(--cream);
+  }
+  .step-icon .step-corner-num {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(107,31,42,0.85);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18pt;
+    font-weight: 500;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .step-num-tag {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11pt;
+    color: var(--gold);
+    letter-spacing: 0.3em;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .three-col p { color: var(--muted); font-size: 10.5pt; margin-top: 4px; }
+
+  /* ─── 2-COL ────────────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14mm;
+    margin-top: 4mm;
+    flex: 1;
+  }
+  .two-col-asym { grid-template-columns: 1fr 1.05fr; }
+
+  /* ─── MODEL CARDS ─────────────────────── */
+  .model-card {
+    background: white;
+    border: 1.5px solid var(--sand);
+    border-radius: 14px;
+    padding: 22px 26px 26px;
+    display: flex;
+    flex-direction: column;
+  }
+  .model-card.highlight {
+    border-color: var(--gold);
+    background: linear-gradient(180deg, white 0%, var(--cream-warm) 100%);
+    box-shadow: 0 6px 20px rgba(201,150,58,0.12);
+  }
+  .model-card .price-sub {
+    font-size: 9pt;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-weight: 600;
+    margin: 0;
+  }
+  .model-card .price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52pt;
+    color: var(--gold);
+    line-height: 1;
+    margin: 6px 0 4px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .model-card .price-note {
+    font-size: 10pt;
+    color: var(--muted);
+    margin: 0 0 16px;
+  }
+  .model-card h3 { margin: 4px 0 8px; }
+
+  /* ─── POSTCARD MOCKUPS ────────────────── */
+  .postcard-stack {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .postcard {
+    width: 92%;
+    aspect-ratio: 2.12;
+    background: white;
+    border-radius: 6px;
+    box-shadow:
+      0 18px 50px rgba(107,31,42,0.22),
+      0 4px 14px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.05);
+    position: relative;
+  }
+  .postcard-front {
+    background-size: cover;
+    background-position: center;
+  }
+  .postcard-front .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, transparent 50%, rgba(0,0,0,0.25) 100%);
+  }
+  .postcard-front .stamp-circle {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+    border: 2px solid rgba(255,255,255,0.85);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 9pt;
+    font-style: italic;
+    color: white;
+    background: rgba(0,0,0,0.18);
+    backdrop-filter: blur(2px);
+  }
+  .postcard-front .greeting {
+    position: absolute;
+    right: 16px;
+    bottom: 14px;
+    text-align: right;
+    color: white;
+    line-height: 1;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.55);
+    z-index: 2;
+  }
+  .postcard-front .greeting .from {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 9pt;
+    display: block;
+    opacity: 0.92;
+    margin-bottom: 3px;
+    letter-spacing: 0.04em;
+  }
+  .postcard-front .greeting .place {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19pt;
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    text-transform: uppercase;
+    display: block;
+  }
+  .postcard-back {
+    background: var(--cream);
+    padding: 16px 18px;
+    position: relative;
+  }
+  .postcard-back .stamp-rect {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 34px;
+    height: 42px;
+    background: white;
+    border: 1.5px dashed var(--burgundy);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 6pt;
+    color: var(--burgundy);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-align: center;
+    line-height: 1.1;
+  }
+  .postcard-back .divider {
+    position: absolute;
+    top: 16px;
+    bottom: 16px;
+    left: 50%;
+    width: 1px;
+    background: var(--sand-soft);
+  }
+  .postcard-back .message {
+    position: absolute;
+    top: 58px;
+    right: 14px;
+    width: 42%;
+    margin: 0;
+    font-family: 'Caveat', cursive;
+    font-size: 11pt;
+    color: #444;
+    line-height: 1.3;
+  }
+  .postcard-back .festival-brand {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--burgundy);
+    line-height: 1.1;
+  }
+  .postcard-back .festival-brand .from {
+    font-style: italic;
+    font-size: 7.5pt;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 2px;
+    letter-spacing: 0.06em;
+  }
+  .postcard-back .festival-brand .name {
+    font-size: 13pt;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .postcard-back .recipient {
+    position: absolute;
+    right: 14px;
+    bottom: 12px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 7.5pt;
+    color: #555;
+    line-height: 1.35;
+    text-align: right;
+  }
+
+  /* Tilted dual-stack for slide 3 hero */
+  .postcard-stack .pc-front {
+    position: absolute;
+    top: 12%;
+    left: 4%;
+    width: 70%;
+    transform: rotate(-5deg);
+    z-index: 2;
+  }
+  .postcard-stack .pc-back {
+    position: absolute;
+    top: 38%;
+    right: 0%;
+    width: 70%;
+    transform: rotate(4deg);
+    z-index: 1;
+  }
+
+  /* ─── PILOT / CONTACT ─────────────────── */
+  .pilot-list { margin-top: 2mm; }
+  .pilot-list li::before { background: var(--burgundy); }
+
+  .contact-row {
+    margin-top: auto;
+    border-top: 1px solid var(--sand);
+    padding-top: 7mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 10pt;
+    color: var(--muted);
+  }
+  .contact-row .label {
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--burgundy);
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .contact-row strong {
+    color: var(--burgundy);
+    display: block;
+    font-size: 14pt;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Reusable PostYourCard logo SVG (defs) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="pyc-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2.5"/>
+      <path d="M2 8h20"/>
+      <rect x="14.5" y="10.5" width="5" height="4" rx="0.6" stroke-dasharray="2 1.4"/>
+      <line x1="4.5" y1="14" x2="11" y2="14"/>
+      <line x1="4.5" y1="16.5" x2="9" y2="16.5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ═══ 1 — COVER ═══════════════════════════════════════ -->
+<section class="slide cover">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <div>
+    <p class="eyebrow">Pitch · Voorjaar 2026</p>
+    <h1>Postcards<br/>from your <em>festival</em>.</h1>
+    <p class="partners">PostYourCard <span>×</span> De Binnenstad</p>
+  </div>
+  <p class="meta">Vertrouwelijk · niet ter verspreiding</p>
+  <div class="slide-number" style="color: rgba(255,255,255,0.5);">01 / 06</div>
+</section>
+
+<!-- ═══ 2 — WAT IS HET ═══════════════════════════════════ -->
+<section class="slide">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <h2>Een <em>echte</em> postkaart,<br/>vanaf je telefoon.</h2>
+  <p class="lead">Bezoekers scannen, kiezen een foto, schrijven een bericht — wij printen en versturen wereldwijd. Geen app, geen logistiek voor de organisator.</p>
+
+  <div class="three-col">
+    <!-- STEP 1 — SCAN (illustration) -->
+    <div>
+      <div class="step-icon illustration">
+        <span class="step-corner-num">1</span>
+        <svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="scanGlow" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#C9963A"/>
+              <stop offset="1" stop-color="#C9963A" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- Phone body -->
+          <rect x="95" y="18" width="80" height="148" rx="12" fill="#FAF6EE" stroke="#6B1F2A" stroke-width="2.4"/>
+          <!-- Notch -->
+          <rect x="124" y="23" width="22" height="4" rx="2" fill="#6B1F2A"/>
+          <!-- QR tile -->
+          <rect x="105" y="48" width="60" height="60" rx="5" fill="white" stroke="#d8cfb8" stroke-width="0.8"/>
+          <!-- QR corners -->
+          <g fill="#6B1F2A">
+            <rect x="109" y="52" width="12" height="12" rx="1.2"/>
+            <rect x="111.5" y="54.5" width="7" height="7" fill="white"/>
+            <rect x="113.5" y="56.5" width="3" height="3"/>
+            <rect x="149" y="52" width="12" height="12" rx="1.2"/>
+            <rect x="151.5" y="54.5" width="7" height="7" fill="white"/>
+            <rect x="153.5" y="56.5" width="3" height="3"/>
+            <rect x="109" y="92" width="12" height="12" rx="1.2"/>
+            <rect x="111.5" y="94.5" width="7" height="7" fill="white"/>
+            <rect x="113.5" y="96.5" width="3" height="3"/>
+            <!-- Random dots -->
+            <rect x="125" y="54" width="3" height="3"/>
+            <rect x="131" y="54" width="3" height="3"/>
+            <rect x="137" y="57" width="3" height="3"/>
+            <rect x="143" y="60" width="3" height="3"/>
+            <rect x="125" y="61" width="3" height="3"/>
+            <rect x="131" y="64" width="3" height="3"/>
+            <rect x="137" y="67" width="3" height="3"/>
+            <rect x="125" y="70" width="3" height="3"/>
+            <rect x="143" y="70" width="3" height="3"/>
+            <rect x="131" y="76" width="3" height="3"/>
+            <rect x="137" y="82" width="3" height="3"/>
+            <rect x="125" y="82" width="3" height="3"/>
+            <rect x="143" y="82" width="3" height="3"/>
+            <rect x="131" y="88" width="3" height="3"/>
+            <rect x="125" y="94" width="3" height="3"/>
+            <rect x="137" y="94" width="3" height="3"/>
+            <rect x="143" y="94" width="3" height="3"/>
+            <rect x="125" y="100" width="3" height="3"/>
+            <rect x="149" y="74" width="3" height="3"/>
+            <rect x="155" y="74" width="3" height="3"/>
+            <rect x="149" y="80" width="3" height="3"/>
+            <rect x="155" y="86" width="3" height="3"/>
+            <rect x="149" y="92" width="3" height="3"/>
+            <rect x="155" y="98" width="3" height="3"/>
+          </g>
+          <!-- Scan line + glow -->
+          <rect x="105" y="76" width="60" height="2.5" fill="#C9963A"/>
+          <rect x="105" y="76" width="60" height="9" fill="url(#scanGlow)"/>
+          <!-- Caption inside phone -->
+          <text x="135" y="128" text-anchor="middle" fill="#6B1F2A" font-family="Cormorant Garamond, serif" font-style="italic" font-size="10">scan &amp; start</text>
+          <!-- Home indicator -->
+          <rect x="121" y="156" width="28" height="3" rx="1.5" fill="#d8cfb8"/>
+        </svg>
+      </div>
+      <span class="step-num-tag">Stap 01</span>
+      <h3>Scan</h3>
+      <p>QR-code op de festivalsite of het toegangsbandje. Werkt op elke smartphone, in elke taal.</p>
+    </div>
+
+    <!-- STEP 2 — PERSONALISEER (illustration) -->
+    <div>
+      <div class="step-icon illustration">
+        <span class="step-corner-num">2</span>
+        <svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="photoGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#F5C26A"/>
+              <stop offset="0.5" stop-color="#C9963A"/>
+              <stop offset="1" stop-color="#6B1F2A"/>
+            </linearGradient>
+          </defs>
+          <!-- Phone body (slightly wider) -->
+          <rect x="80" y="18" width="110" height="148" rx="12" fill="#FAF6EE" stroke="#6B1F2A" stroke-width="2.4"/>
+          <rect x="124" y="23" width="22" height="4" rx="2" fill="#6B1F2A"/>
+          <!-- Postcard preview on screen -->
+          <rect x="93" y="40" width="84" height="55" rx="3" fill="white" stroke="#d8cfb8" stroke-width="0.8"/>
+          <rect x="93" y="40" width="84" height="55" rx="3" fill="url(#photoGrad)"/>
+          <!-- Skyline silhouette -->
+          <path d="M 93 84 L 105 70 L 115 78 L 125 66 L 135 72 L 148 64 L 162 72 L 177 68 L 177 95 L 93 95 Z" fill="#4A1118" opacity="0.55"/>
+          <!-- Sun -->
+          <circle cx="153" cy="56" r="5" fill="#FFE5B0" opacity="0.9"/>
+          <!-- Stamp box on photo -->
+          <rect x="167" y="43" width="6" height="8" fill="white" stroke="#6B1F2A" stroke-width="0.7" stroke-dasharray="0.9 0.6" opacity="0.85"/>
+          <!-- Handwritten lines -->
+          <g stroke="#6B1F2A" stroke-width="1.5" stroke-linecap="round" fill="none">
+            <path d="M 96 108 Q 104 105, 113 107 T 132 106 Q 140 107, 148 105"/>
+            <path d="M 96 117 Q 106 115, 116 117 T 138 116 T 162 117"/>
+            <path d="M 96 126 Q 105 124, 113 125 T 130 126"/>
+          </g>
+          <!-- Pen -->
+          <g transform="translate(132 126) rotate(35)">
+            <rect x="0" y="0" width="26" height="4" rx="1.5" fill="#C9963A"/>
+            <polygon points="26,0 30,2 26,4" fill="#6B1F2A"/>
+            <rect x="2" y="0" width="2" height="4" fill="#4A1118"/>
+          </g>
+          <!-- CTA button -->
+          <rect x="95" y="139" width="80" height="13" rx="6.5" fill="#6B1F2A"/>
+          <text x="135" y="148" text-anchor="middle" fill="white" font-family="Inter, sans-serif" font-size="6.5" font-weight="700" letter-spacing="0.5">VERZENDEN</text>
+          <!-- Home indicator -->
+          <rect x="121" y="158" width="28" height="3" rx="1.5" fill="#d8cfb8"/>
+        </svg>
+      </div>
+      <span class="step-num-tag">Stap 02</span>
+      <h3>Personaliseer</h3>
+      <p>Foto van het moment, handgeschreven bericht, adres van familie of vrienden — minder dan 2 minuten werk.</p>
+    </div>
+
+    <!-- STEP 3 — WERELDWIJD (illustration) -->
+    <div>
+      <div class="step-icon illustration">
+        <span class="step-corner-num">3</span>
+        <svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="globeGrad" cx="0.35" cy="0.35" r="0.7">
+              <stop offset="0" stop-color="#FAF6EE"/>
+              <stop offset="0.6" stop-color="#FAF6EE"/>
+              <stop offset="1" stop-color="#e8dcc1"/>
+            </radialGradient>
+            <linearGradient id="postcardGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#F5C26A"/>
+              <stop offset="0.5" stop-color="#C9963A"/>
+              <stop offset="1" stop-color="#6B1F2A"/>
+            </linearGradient>
+          </defs>
+          <!-- Globe -->
+          <circle cx="120" cy="100" r="60" fill="url(#globeGrad)" stroke="#6B1F2A" stroke-width="2"/>
+          <!-- Meridians/parallels -->
+          <ellipse cx="120" cy="100" rx="60" ry="22" fill="none" stroke="#6B1F2A" stroke-width="0.9" opacity="0.4"/>
+          <ellipse cx="120" cy="100" rx="60" ry="40" fill="none" stroke="#6B1F2A" stroke-width="0.9" opacity="0.3"/>
+          <ellipse cx="120" cy="100" rx="22" ry="60" fill="none" stroke="#6B1F2A" stroke-width="0.9" opacity="0.4"/>
+          <ellipse cx="120" cy="100" rx="40" ry="60" fill="none" stroke="#6B1F2A" stroke-width="0.9" opacity="0.3"/>
+          <!-- Continents -->
+          <g fill="#C9963A" opacity="0.7">
+            <path d="M 95 78 Q 105 73, 115 80 Q 120 88, 112 93 Q 100 94, 95 86 Z"/>
+            <path d="M 130 92 Q 145 87, 155 97 Q 152 112, 138 109 Q 128 102, 130 92 Z"/>
+            <path d="M 100 118 Q 112 113, 120 122 Q 115 137, 102 135 Q 92 128, 100 118 Z"/>
+          </g>
+          <!-- Trajectory dotted arc -->
+          <path d="M 50 56 Q 120 6, 200 60" fill="none" stroke="#6B1F2A" stroke-width="1.8" stroke-dasharray="3 3" opacity="0.6"/>
+          <!-- Postcard on arc -->
+          <g transform="translate(185 50) rotate(28)">
+            <rect x="0" y="0" width="42" height="30" rx="2" fill="white" stroke="#6B1F2A" stroke-width="1.2"/>
+            <rect x="2" y="2" width="38" height="20" rx="1" fill="url(#postcardGrad)"/>
+            <rect x="32" y="4" width="6" height="7" fill="white" stroke="#6B1F2A" stroke-width="0.6" stroke-dasharray="0.8 0.6" opacity="0.8"/>
+            <line x1="3" y1="26" x2="20" y2="26" stroke="#6B1F2A" stroke-width="0.8"/>
+          </g>
+          <!-- Speed lines -->
+          <g stroke="#C9963A" stroke-width="1.5" opacity="0.5" stroke-linecap="round">
+            <line x1="173" y1="46" x2="183" y2="44"/>
+            <line x1="170" y1="54" x2="178" y2="52"/>
+            <line x1="175" y1="62" x2="183" y2="60"/>
+          </g>
+          <!-- Pin at start -->
+          <g transform="translate(50 56)">
+            <circle r="4.5" fill="#6B1F2A"/>
+            <circle r="1.6" fill="#C9963A"/>
+          </g>
+        </svg>
+      </div>
+      <span class="step-num-tag">Stap 03</span>
+      <h3>Wereldwijd</h3>
+      <p>Wij printen op 350gsm karton en versturen wereldwijd. De kaart valt 5 tot 10 dagen later in de bus.</p>
+    </div>
+  </div>
+  <div class="slide-number">02 / 06</div>
+</section>
+
+<!-- ═══ 3 — WAAROM FESTIVALS ═════════════════════════════ -->
+<section class="slide">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <h2>Het ideale<br/><em>festival-moment.</em></h2>
+  <p class="lead">Bezoekers maken honderden foto's. Ze sturen er bijna nooit één. Een echte kaart vangt het moment vast en zet de merkbeleving door — weken na het festival, in het huis van de ontvanger.</p>
+
+  <div class="two-col two-col-asym">
+    <ul>
+      <li><strong>Een blijvende herinnering.</strong> Geen verloren story na 24 uur — een fysieke kaart die op de koelkast belandt en jaren blijft hangen.</li>
+      <li><strong>Tweede contact-moment.</strong> De kaart komt aan wanneer het festival voorbij is. Het merk leeft door bij ouders, lief, vrienden van de bezoeker.</li>
+      <li><strong>Universeel cadeau.</strong> Voor wie thuisbleef. Emotioneel, tastbaar, perfect deelbaar in stories.</li>
+      <li><strong>Geen logistiek voor het festival.</strong> Wij doen printing, fulfillment, klantenservice en betalingen. Het festival hoeft niets te leveren behalve de QR-code.</li>
+    </ul>
+
+    <div class="postcard-stack">
+      <!-- FRONT — festival photo -->
+      <div class="postcard postcard-front pc-front" style="background-image: url('images/festival-crowd.jpg');">
+        <div class="photo-overlay"></div>
+        <div class="stamp-circle">2026</div>
+        <div class="greeting">
+          <span class="from">greetings from</span>
+          <span class="place">your festival</span>
+        </div>
+      </div>
+      <!-- BACK — branded -->
+      <div class="postcard postcard-back pc-back">
+        <div class="stamp-rect">FEST<br/>2026</div>
+        <div class="divider"></div>
+        <p class="message">Hier een kaartje! XX</p>
+        <div class="festival-brand">
+          <span class="from">greetings from</span>
+          <span class="name">your festival</span>
+        </div>
+        <div class="recipient">
+          Mevr. M. Janssens<br/>
+          Hoofdstraat 12<br/>
+          3000 Leuven · BE
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">03 / 06</div>
+</section>
+
+<!-- ═══ 4 — BRANDING CANVAS ══════════════════════════════ -->
+<section class="slide">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <h2>De achterkant<br/>= <em>jouw canvas.</em></h2>
+  <p class="lead">Elke kaart die wereldwijd vertrekt, draagt de branding van het festival of de hoofdsponsor. Een postale billboard, betaald door de bezoeker zelf — en ontvangen op een moment dat alle aandacht naar de inkomende post gaat.</p>
+
+  <div class="two-col">
+    <ul>
+      <li><strong>Festival-logo + editie</strong> permanent op de achterkant van elke kaart.</li>
+      <li><strong>Sponsor-zone</strong> beschikbaar — bv. "powered by …" met logo van de hoofdsponsor.</li>
+      <li><strong>Custom postzegel-design</strong> met festival-iconografie, in plaats van een gewone postzegel.</li>
+      <li><strong>Co-branded of fully white-label</strong> — naar keuze van De Binnenstad en de festivalorganisator.</li>
+      <li><strong>Geprint op 350gsm karton</strong> in offset-kwaliteit, geleverd door PostYourCard.</li>
+    </ul>
+
+    <div class="postcard-stack">
+      <div class="postcard postcard-front pc-front" style="background-image: url('images/festival-stage.jpg');">
+        <div class="photo-overlay"></div>
+        <div class="stamp-circle">2026</div>
+        <div class="greeting">
+          <span class="from">greetings from</span>
+          <span class="place">your festival</span>
+        </div>
+      </div>
+      <div class="postcard postcard-back pc-back">
+        <div class="stamp-rect">FEST<br/>2026</div>
+        <div class="divider"></div>
+        <p class="message">Beste mama, vandaag…</p>
+        <div class="festival-brand">
+          <span class="from">greetings from</span>
+          <span class="name">your festival</span>
+        </div>
+        <div class="recipient">
+          Mevr. M. Janssens<br/>
+          3000 Leuven · BE
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">04 / 06</div>
+</section>
+
+<!-- ═══ 5 — MODEL ════════════════════════════════════════ -->
+<section class="slide">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <h2>Twee modellen,<br/>één <em>doel.</em></h2>
+  <p class="lead">Afhankelijk van wat het festival wil — een extra revenue stream of een gratis branded experience voor de bezoeker — bieden we twee opzetten aan. Beide zijn schaalbaar en vereisen geen voorinvestering door het festival.</p>
+
+  <div class="two-col" style="gap: 12mm;">
+    <div class="model-card">
+      <p class="price-sub">Bezoeker betaalt</p>
+      <p class="price">€7.99</p>
+      <p class="price-note">per kaart · verzending wereldwijd inbegrepen</p>
+      <h3>Revenue share</h3>
+      <p style="color: var(--muted);">20% commissie naar het festival of De Binnenstad per bestelde kaart. Geen voorinvestering, schaalbaar met aantal bezoekers, automatische uitbetaling via Stripe Connect.</p>
+    </div>
+    <div class="model-card highlight">
+      <p class="price-sub">Sponsor betaalt</p>
+      <p class="price">€4 — €5</p>
+      <p class="price-note">per kaart · in volume vanaf 5.000 stuks</p>
+      <h3>Branded gift-actie</h3>
+      <p style="color: var(--muted);">Festival of hoofdsponsor schenkt X kaarten als gift aan bezoekers. Vaste bulk-prijs, volledig white-label, perfect voor sponsoractivatie of VIP-experience.</p>
+    </div>
+  </div>
+  <div class="slide-number">05 / 06</div>
+</section>
+
+<!-- ═══ 6 — PILOT + CONTACT ══════════════════════════════ -->
+<section class="slide">
+  <div class="brand-mark">
+    <span class="logo-tile"><svg><use href="#pyc-logo"/></svg></span>
+    PostYourCard
+  </div>
+  <h2>Voorstel:<br/><em>één pilot</em>, zomer 2026.</h2>
+  <p class="lead">We stellen voor om met één De Binnenstad-festival te starten als proof-point. Resultaten en leerpunten dienen als basis voor uitrol naar het volledige De Binnenstad-portfolio in 2027.</p>
+
+  <ul class="pilot-list">
+    <li><strong>Eén festival, 3 tot 5 dagen.</strong> QR-codes op key locaties — entree, food court, main stage, campsite.</li>
+    <li><strong>Co-branded of white-label kaartontwerp,</strong> in samenwerking met het De Binnenstad design-team.</li>
+    <li><strong>Volledige technische infrastructuur</strong> door PostYourCard — printing, fulfillment, klantenservice, betalingen.</li>
+    <li><strong>Live dashboard</strong> voor De Binnenstad: aantal bestellingen, top-bestemmingen, revenue real-time.</li>
+    <li><strong>Evaluatie</strong> binnen 14 dagen na het festival, met cijfers en beelden voor uitrol naar 2027.</li>
+  </ul>
+
+  <div class="contact-row">
+    <div>
+      <span class="label">Contact</span>
+      <strong>PostYourCard</strong>
+      info@postyourcard.com<br/>
+      www.postyourcard.com
+    </div>
+    <div style="text-align:right;">
+      <span class="label">Volgende stap</span>
+      <strong>Een call van 30 minuten</strong>
+      Festival, timing en ontwerp bespreken
+    </div>
+  </div>
+  <div class="slide-number">06 / 06</div>
+</section>
+
+</body>
+</html>
