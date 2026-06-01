@@ -99,6 +99,13 @@ export default function HomeHero() {
               {t("home.subtitle")}
             </p>
 
+            <p className="mt-4 font-heading text-white text-3xl sm:text-4xl font-semibold">
+              €&nbsp;7,99
+              <span className="ml-2 text-white/65 font-normal text-base sm:text-lg align-middle">
+                all-in
+              </span>
+            </p>
+
             <Link
               href="/order/hotel-brugge"
               className="mt-8 inline-flex items-center gap-2.5 rounded-2xl bg-teal px-7 py-4 text-base font-medium text-white
