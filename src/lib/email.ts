@@ -42,7 +42,7 @@ export async function sendOrderEmails(
     // 1. Customer confirmation — burgundy banner + Cormorant Garamond + 2-col order card
     resend.emails.send({
       from: FROM_EMAIL,
-      to: data.customerEmail,
+      to: [data.customerEmail],
       subject: `Your postcard is on its way! (${data.orderReference})`,
       html: customerEmailHtml({
         recipientName: data.recipientName,
@@ -103,17 +103,27 @@ export async function sendOrderEmails(
     }),
   ]);
 
-  const failed = results.filter((r) => r.status === "rejected");
-  if (failed.length > 0) {
-    console.error(
-      "Some order emails failed:",
-      failed.map((f) => (f as PromiseRejectedResult).reason)
-    );
+  // Resend SDK returns { data, error } — check for errors explicitly
+  const customerResult = results[0];
+  const ownerResult = results[1];
+
+  const customerOk = customerResult.status === "fulfilled" &&
+    !(customerResult.value as any)?.error;
+  const ownerOk = ownerResult.status === "fulfilled" &&
+    !(ownerResult.value as any)?.error;
+
+  if (!customerOk) {
+    console.error("Customer email failed:",
+      customerResult.status === "rejected" ? customerResult.reason : (customerResult.value as any)?.error);
+  }
+  if (!ownerOk) {
+    console.error("Owner email failed:",
+      ownerResult.status === "rejected" ? ownerResult.reason : (ownerResult.value as any)?.error);
   }
 
   return {
-    customer: results[0].status === "fulfilled",
-    owner: results[1].status === "fulfilled",
+    customer: customerOk,
+    owner: ownerOk,
   };
 }
 
