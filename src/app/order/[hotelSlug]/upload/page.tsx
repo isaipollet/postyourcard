@@ -19,7 +19,7 @@ interface CropState {
 }
 
 const MAX_FILE_SIZE = 20_000_000;
-const MIN_PIXELS = 600;
+const MIN_PIXELS = 1200;
 
 export default function UploadPage() {
   const params = useParams();
@@ -410,29 +410,28 @@ export default function UploadPage() {
           )}
 
           {!uploadedUrl ? (
-            /* Empty state — postcard-shaped placeholder + two clear action buttons */
+            /* Empty state — Bruges background photo + two clear action buttons */
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
             >
+              {/* Postcard-shaped Bruges photo — sets the mood, no dashed placeholder */}
               <div
-                onClick={() => { hapticTap(); setSheetOpen(true); }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { hapticTap(); setSheetOpen(true); } }}
-                className="w-full rounded-2xl overflow-hidden shadow-lg border-2 border-dashed border-sand-300
-                  relative bg-gradient-to-br from-sand-50 via-white to-sand-100/50
-                  sm:cursor-default cursor-pointer hover:border-teal/40 active:scale-[0.99] transition-all"
+                className="w-full rounded-2xl overflow-hidden shadow-xl relative"
                 style={{ aspectRatio: `${format.aspectRatio}` }}
               >
-                <div className="w-full h-full flex flex-col items-center justify-center gap-2 p-6">
-                  <div className="w-14 h-14 rounded-2xl bg-teal/10 flex items-center justify-center">
-                    <svg className="w-7 h-7 text-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M6 20.25h12a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25zM9.75 9a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                    </svg>
-                  </div>
-                  <p className="text-sand-600 text-sm font-medium">{t("upload.placeholder")}</p>
-                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-teal/[0.07] rounded-full text-[11px] text-teal font-medium">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/hero-bruges.jpg"
+                  alt="Bruges"
+                  className="w-full h-full object-cover object-center"
+                />
+                {/* Gradient overlay with subtle hint text */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent flex flex-col items-center justify-end pb-5 gap-2 px-4">
+                  <p className="text-white font-semibold text-sm drop-shadow-md text-center">
+                    {t("upload.placeholder")}
+                  </p>
+                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full text-[11px] text-white font-medium">
                     {t(`upload.tip.${format.key}`)}
                   </span>
                 </div>

@@ -78,16 +78,35 @@ export async function sendOrderEmails(
             </p>
             <img src="${data.croppedImageUrl}" alt="Postcard photo" style="max-width: 100%; max-height: 300px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-bottom: 20px;" />
 
-            <h3 style="margin: 0 0 8px; color: #6B1F2A; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">✏️ Message (back)</h3>
-            <div style="background: #FAF6EE; border: 1px solid #E0D4B6; padding: 14px; border-radius: 4px; font-style: italic; font-size: 15px; line-height: 1.5; white-space: pre-wrap; margin-bottom: 20px;">${escapeHtml(data.message)}</div>
-
-            <h3 style="margin: 0 0 8px; color: #6B1F2A; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">📬 Ship to</h3>
-            <div style="background: white; border: 2px dashed #999; padding: 14px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
-              <strong>${escapeHtml(data.recipientName)}</strong><br />
-              ${escapeHtml(data.recipientStreet)}<br />
-              ${escapeHtml(data.recipientPostal)} ${escapeHtml(data.recipientCity)}<br />
-              <strong style="text-transform: uppercase;">${escapeHtml(data.recipientCountry)}</strong>
-            </div>
+            <h3 style="margin: 0 0 8px; color: #6B1F2A; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">✉️ Postcard Back (print-ready layout)</h3>
+            <!-- Postcard back visual — landscape, left = message, right = address + stamp -->
+            <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;border:1px solid #ccc;border-radius:6px;overflow:hidden;background:#fffef9;margin-bottom:20px;font-family:Georgia,'Times New Roman',serif;">
+              <tr>
+                <!-- Left half: message -->
+                <td style="width:48%;padding:14px 16px 14px 14px;border-right:1px solid #aaa;vertical-align:top;">
+                  <div style="font-size:9px;color:#999;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;font-family:sans-serif;">Personal message</div>
+                  <div style="font-style:italic;font-size:12px;line-height:1.7;color:#2a1f1f;white-space:pre-wrap;">${escapeHtml(data.message || "")}</div>
+                  <div style="margin-top:16px;font-size:8px;color:#bbb;font-style:normal;font-family:sans-serif;">PostYourCard.com &middot; Bruges, Belgium</div>
+                </td>
+                <!-- Right half: stamp + address -->
+                <td style="width:52%;padding:12px 14px;vertical-align:top;">
+                  <!-- Stamp placeholder -->
+                  <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+                    <div style="width:40px;height:48px;border:1px dashed #bbb;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:20px;">🏰</div>
+                  </div>
+                  <!-- Horizontal divider lines (traditional postcard back) -->
+                  <div style="border-top:1px solid #ccc;margin-bottom:5px;"></div>
+                  <div style="border-top:1px solid #ccc;margin-bottom:10px;"></div>
+                  <!-- Recipient address -->
+                  <div style="font-size:12px;line-height:1.8;color:#1a1a1a;font-family:'Courier New',monospace;">
+                    <strong>${escapeHtml(data.recipientName)}</strong><br />
+                    ${escapeHtml(data.recipientStreet)}<br />
+                    ${escapeHtml(data.recipientPostal)} ${escapeHtml(data.recipientCity)}<br />
+                    <strong style="text-transform:uppercase;">${escapeHtml(data.recipientCountry)}</strong>
+                  </div>
+                </td>
+              </tr>
+            </table>
 
             <hr style="border: none; border-top: 1px solid #E5E5E5; margin: 20px 0;" />
 

@@ -103,6 +103,16 @@ export default function PrintQueuePage() {
     return { total: orders.length, standardCount, panoramicCount };
   }, [orders]);
 
+  /**
+   * Build a Cloudinary download URL with fl_attachment so the browser saves
+   * the file to disk (Content-Disposition: attachment) instead of opening a tab.
+   * Inserts the transformation right after /upload/ in the CDN URL.
+   */
+  const buildDownloadUrl = (cloudinaryUrl: string, filename: string): string => {
+    const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+    return cloudinaryUrl.replace("/upload/", `/upload/fl_attachment:${safeFilename}/`);
+  };
+
   const downloadAllPhotos = () => {
     if (filtered.length === 0) {
       toast.error("Nothing to download");
@@ -112,16 +122,19 @@ export default function PrintQueuePage() {
     let count = 0;
     filtered.forEach((order, idx) => {
       if (!order.croppedImageUrl) return;
+      const filename = `${order.orderReference ?? order.id.slice(0, 8)}-${order.format}.jpg`;
+      const downloadUrl = buildDownloadUrl(order.croppedImageUrl, filename);
       setTimeout(() => {
         const a = document.createElement("a");
-        a.href = order.croppedImageUrl!;
-        a.download = `${order.orderReference ?? order.id.slice(0, 8)}-${order.format}.jpg`;
-        a.target = "_blank";
+        a.href = downloadUrl;
+        a.download = filename; // works when same-origin; Cloudinary fl_attachment handles CDN downloads
+        document.body.appendChild(a);
         a.click();
-      }, idx * 250); // stagger to avoid browser block
+        document.body.removeChild(a);
+      }, idx * 400); // stagger to avoid browser throttling
       count++;
     });
-    toast.success(`Opening ${count} photo${count !== 1 ? "s" : ""} for download`);
+    toast.success(`Downloading ${count} photo${count !== 1 ? "s" : ""}…`);
   };
 
   if (loading) {
@@ -169,7 +182,7 @@ export default function PrintQueuePage() {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
             </svg>
-            Download photos
+            Download all photos
           </button>
         </div>
       </div>
