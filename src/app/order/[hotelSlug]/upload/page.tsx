@@ -422,7 +422,7 @@ export default function UploadPage() {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/hero-bruges.jpg"
+                  src="/brugge-background.jpg"
                   alt="Bruges"
                   className="w-full h-full object-cover object-center"
                 />
