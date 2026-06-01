@@ -402,7 +402,7 @@ export default function UploadPage() {
           </div>
         </div>
 
-        <div className="w-full max-w-sm mx-auto px-4 pb-8 relative z-10">
+        <div className={`w-full mx-auto px-4 pb-8 relative z-10 ${format.key === "large" ? "max-w-sm sm:max-w-[600px]" : "max-w-sm sm:max-w-[440px]"}`}>
           {uploadError && (
             <div className="mb-4 bg-red-50 border border-red-200 rounded-2xl p-3 text-sm text-red-700">
               {uploadError}

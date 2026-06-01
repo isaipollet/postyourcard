@@ -82,7 +82,7 @@ export default function MessagePage() {
         </h1>
         <p className="text-sm text-sand-500 mb-5">{t("message.subtitle")}</p>
 
-        <div className="w-full max-w-sm space-y-5">
+        <div className={`w-full space-y-5 ${format.key === "large" ? "max-w-sm sm:max-w-[600px]" : "max-w-sm sm:max-w-[440px]"}`}>
           {/* ── Message textarea ── */}
           <div>
             <label htmlFor="message" className="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">

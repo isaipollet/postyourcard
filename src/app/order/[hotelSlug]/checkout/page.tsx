@@ -113,7 +113,7 @@ export default function CheckoutPage() {
           {t("checkout.title")}
         </h1>
 
-        <div className="w-full max-w-sm space-y-6">
+        <div className={`w-full space-y-6 ${format.key === "large" ? "max-w-sm sm:max-w-[600px]" : "max-w-sm sm:max-w-[440px]"}`}>
           {/* Order summary — receipt style */}
           <div className="bg-white rounded-2xl border-2 border-sand-200 p-4 overflow-hidden">
             <h2 className="font-heading font-semibold text-gray-800 mb-3">
