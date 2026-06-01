@@ -26,6 +26,10 @@ export default function CheckoutPage() {
   const [orderReference, setOrderReference] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(true);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoApplied, setPromoApplied] = useState(false);
+  const [freeOrderId, setFreeOrderId] = useState<string | null>(null);
+  const [freeConfirming, setFreeConfirming] = useState(false);
 
   useEffect(() => {
     if (!selectedFormat || !croppedImageUrl || !message.trim()) {
@@ -68,6 +72,7 @@ export default function CheckoutPage() {
         message,
         customerEmail,
         address,
+        promoCode: promoCode.trim() || undefined,
       }),
     })
       .then((res) => {
@@ -75,14 +80,21 @@ export default function CheckoutPage() {
         return res.json();
       })
       .then((data) => {
-        setClientSecret(data.clientSecret);
-        setOrderReference(data.orderReference);
-        useOrderStore.getState().setPendingOrder({
-          orderId: data.orderId,
-          clientSecret: data.clientSecret,
-          orderReference: data.orderReference,
-          fingerprint,
-        });
+        if (data.isFree) {
+          // Promo code was valid — no Stripe needed
+          setFreeOrderId(data.orderId);
+          setOrderReference(data.orderReference);
+          setPromoApplied(true);
+        } else {
+          setClientSecret(data.clientSecret);
+          setOrderReference(data.orderReference);
+          useOrderStore.getState().setPendingOrder({
+            orderId: data.orderId,
+            clientSecret: data.clientSecret,
+            orderReference: data.orderReference,
+            fingerprint,
+          });
+        }
       })
       .catch((err) => setError(err.message))
       .finally(() => setCreating(false));
@@ -202,41 +214,87 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Stripe Elements */}
-          <Elements
-            stripe={getStripe()}
-            options={{
-              clientSecret,
-              locale: lang,
-              appearance: {
-                theme: "stripe",
-                variables: {
-                  colorPrimary: "#6B1F2A",
-                  borderRadius: "12px",
-                  fontFamily: "Inter, system-ui, sans-serif",
-                  colorBackground: "#FFFFFF",
-                  colorText: "#1A1A1A",
-                  colorTextPlaceholder: "#B5832E",
-                },
-                rules: {
-                  ".Input": {
-                    border: "2px solid #FAF0D7",
-                    boxShadow: "none",
+          {/* ── Promo code field ── */}
+          {!promoApplied && (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                placeholder="Promo code"
+                className="flex-1 px-4 py-3 rounded-2xl border border-sand-200 bg-white text-gray-900
+                  placeholder:text-sand-400 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20
+                  text-sm shadow-sm uppercase tracking-widest"
+              />
+            </div>
+          )}
+
+          {/* ── Free order confirm (promo code applied) ── */}
+          {promoApplied && freeOrderId && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-center space-y-4">
+              <div className="text-2xl">🎉</div>
+              <p className="font-heading font-semibold text-emerald-800 text-lg">Promo code applied!</p>
+              <p className="text-sm text-emerald-700">This order is free. Click below to confirm and send the emails.</p>
+              <button
+                onClick={async () => {
+                  setFreeConfirming(true);
+                  try {
+                    await fetch(`/api/orders/${freeOrderId}/free-confirm`, { method: "POST" });
+                    router.push(`/order/${slug}/confirmed?ref=${encodeURIComponent(orderReference!)}`);
+                  } catch {
+                    setFreeConfirming(false);
+                  }
+                }}
+                disabled={freeConfirming}
+                className="w-full py-3.5 px-6 rounded-xl font-medium text-white bg-emerald-600 hover:bg-emerald-700
+                  active:scale-[0.98] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {freeConfirming ? (
+                  <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Sending…</>
+                ) : (
+                  <>✓ Confirm free test order</>
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Stripe Elements — only when not a free promo order */}
+          {!promoApplied && clientSecret && (
+            <Elements
+              stripe={getStripe()}
+              options={{
+                clientSecret,
+                locale: lang,
+                appearance: {
+                  theme: "stripe",
+                  variables: {
+                    colorPrimary: "#6B1F2A",
+                    borderRadius: "12px",
+                    fontFamily: "Inter, system-ui, sans-serif",
+                    colorBackground: "#FFFFFF",
+                    colorText: "#1A1A1A",
+                    colorTextPlaceholder: "#B5832E",
                   },
-                  ".Input:focus": {
-                    border: "2px solid #6B1F2A",
-                    boxShadow: "none",
+                  rules: {
+                    ".Input": {
+                      border: "2px solid #FAF0D7",
+                      boxShadow: "none",
+                    },
+                    ".Input:focus": {
+                      border: "2px solid #6B1F2A",
+                      boxShadow: "none",
+                    },
                   },
                 },
-              },
-            }}
-          >
-            <PaymentForm
-              slug={slug}
-              orderReference={orderReference!}
-              price={format.price}
-            />
-          </Elements>
+              }}
+            >
+              <PaymentForm
+                slug={slug}
+                orderReference={orderReference!}
+                price={format.price}
+              />
+            </Elements>
+          )}
 
           {/* Trust badges */}
           <div className="flex items-center justify-center gap-4 pt-2">

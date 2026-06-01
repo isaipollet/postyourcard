@@ -14,6 +14,7 @@ const CreateOrderSchema = z.object({
   croppedImageUrl: z.string().min(1),
   message: z.string().min(1).max(300),
   customerEmail: z.string().email(),
+  promoCode: z.string().optional(),
   address: z.object({
     name: z.string().min(1),
     street: z.string().min(1),
@@ -115,6 +116,24 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+
+  // ── Free promo code bypass ──────────────────────────────────────────────
+  const ownerCode = process.env.OWNER_PROMO_CODE;
+  const isFree =
+    ownerCode &&
+    ownerCode.length > 0 &&
+    input.promoCode?.trim().toUpperCase() === ownerCode.trim().toUpperCase();
+
+  if (isFree) {
+    // Mark order as paid immediately — no Stripe needed
+    await db
+      .update(orders)
+      .set({ status: "paid", priceCents: 0, commissionCents: 0 })
+      .where(eq(orders.id, order.id));
+
+    return NextResponse.json({ isFree: true, orderId: order.id, orderReference });
+  }
+  // ────────────────────────────────────────────────────────────────────────
 
   // Create Stripe PaymentIntent
   try {
