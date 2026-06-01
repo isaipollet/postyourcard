@@ -478,19 +478,18 @@ export default function UploadPage() {
 
                 {crop && !cropConfirmed && (
                   <div className="absolute inset-0">
-                    <div className="absolute inset-0 bg-black/40 pointer-events-none" />
                     <div
                       onPointerDown={handleCropPointerDown}
                       onPointerMove={handleCropPointerMove}
                       onPointerUp={handleCropPointerUp}
                       onPointerCancel={handleCropPointerUp}
-                      className="absolute border-2 border-white/90 rounded-lg shadow-lg cursor-move touch-none select-none"
+                      className="absolute border-2 border-white rounded-lg cursor-move touch-none select-none"
                       style={{
                         left: `${(crop.x / (imgRef.current?.naturalWidth || 1)) * 100}%`,
                         top: `${(crop.y / (imgRef.current?.naturalHeight || 1)) * 100}%`,
                         width: `${(crop.width / (imgRef.current?.naturalWidth || 1)) * 100}%`,
                         height: `${(crop.height / (imgRef.current?.naturalHeight || 1)) * 100}%`,
-                        boxShadow: "0 0 0 9999px rgba(0,0,0,0.4)",
+                        boxShadow: "0 0 0 9999px rgba(0,0,0,0.65)",
                       }}
                     >
                       <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-teal rounded-full border-2 border-white pointer-events-none" />

@@ -75,7 +75,7 @@ export default function ConfirmedPage() {
         animate={{ y: 0, opacity: 1, rotate: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
         className="relative mb-8"
-        style={{ width: "min(280px, 80vw)" }}
+        style={{ width: format.key === "large" ? "min(580px, 88vw)" : "min(440px, 88vw)" }}
       >
         <motion.div
           animate={{ y: [-4, 4, -4], rotate: [-1, 1, -1] }}
