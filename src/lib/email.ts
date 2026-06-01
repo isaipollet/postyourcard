@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { generatePostcardBackPng } from "@/lib/postcard-back-image";
 
 const resend = new Resend(process.env.RESEND_API_KEY ?? "re_placeholder");
 
@@ -16,6 +17,7 @@ interface OrderEmailData {
   message: string;
   croppedImageUrl: string;
   format: string;
+  formatKey: "standard" | "large";
   formatDimensions: string;
   hotelName: string;
   hotelEmail: string;
@@ -38,6 +40,25 @@ export async function sendOrderEmails(
   const cityFromHotel = (data.hotelCity ?? "").trim();
   const totalPaid = `€&nbsp;${price.replace(".", ",")}`;
 
+  // Generate postcard back PNG — fail-safe (missing attachment ≠ missing email)
+  let backPngBuffer: Buffer | null = null;
+  try {
+    backPngBuffer = await generatePostcardBackPng({
+      message: data.message,
+      recipientName: data.recipientName,
+      recipientStreet: data.recipientStreet,
+      recipientPostal: data.recipientPostal,
+      recipientCity: data.recipientCity,
+      recipientCountry: data.recipientCountry,
+      formatKey: data.formatKey,
+    });
+  } catch (err) {
+    console.error("Failed to generate postcard back PNG:", err);
+  }
+
+  // Safe filename base (no special chars)
+  const safeRef = data.orderReference.replace(/[^a-zA-Z0-9_-]/g, "_");
+
   const results = await Promise.allSettled([
     // 1. Customer confirmation — burgundy banner + Cormorant Garamond + 2-col order card
     resend.emails.send({
@@ -55,11 +76,29 @@ export async function sendOrderEmails(
       }),
     }),
 
-    // 2. Fulfillment email to owner — contains everything needed to print + post
+    // 2. Fulfillment email to owner — HTML body + JPEG front + PNG back as attachments
     resend.emails.send({
       from: FROM_EMAIL,
       to: OWNER_EMAIL,
       subject: `[PRINT] ${data.orderReference} — ${data.format} for ${data.recipientCity}, ${data.recipientCountry}`,
+      attachments: [
+        // Front photo — fetched by Resend from Cloudinary
+        {
+          filename: `${safeRef}-front.jpg`,
+          path: data.croppedImageUrl,
+          contentType: "image/jpeg",
+        },
+        // Back side — generated PNG (only if generation succeeded)
+        ...(backPngBuffer
+          ? [
+              {
+                filename: `${safeRef}-back.png`,
+                content: backPngBuffer,
+                contentType: "image/png",
+              },
+            ]
+          : []),
+      ],
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a;">
           <div style="background: #6B1F2A; color: white; padding: 20px; border-radius: 8px 8px 0 0;">

@@ -67,6 +67,7 @@ export async function POST(
       message: order.message ?? "",
       croppedImageUrl: order.croppedImageUrl!,
       format: formatInfo?.name ?? order.format,
+      formatKey: (order.format === "large" ? "large" : "standard") as "standard" | "large",
       formatDimensions: formatInfo?.dimensions ?? "",
       hotelName: order.hotelName,
       hotelEmail: order.hotelEmail,
