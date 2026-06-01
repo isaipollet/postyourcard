@@ -22,84 +22,60 @@ export default function CheckoutPage() {
   const { selectedFormat, croppedImageUrl, message, customerEmail, address } =
     useOrderStore();
   const { t, lang } = useLanguage();
+  const [phase, setPhase] = useState<"summary" | "payment">("summary");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [orderReference, setOrderReference] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [creating, setCreating] = useState(true);
+  const [creating, setCreating] = useState(false);
   const [promoCode, setPromoCode] = useState("");
   const [promoApplied, setPromoApplied] = useState(false);
   const [freeOrderId, setFreeOrderId] = useState<string | null>(null);
   const [freeConfirming, setFreeConfirming] = useState(false);
 
+  // Only redirect guard — order is created lazily on "Continue"
   useEffect(() => {
     if (!selectedFormat || !croppedImageUrl || !message.trim()) {
       router.replace(`/order/${slug}`);
-      return;
     }
-
-    const state = useOrderStore.getState();
-    const fingerprint = JSON.stringify({
-      slug,
-      selectedFormat,
-      cloudinaryPublicId: state.cloudinaryPublicId,
-      croppedImageUrl,
-      message,
-      customerEmail,
-      address,
-    });
-
-    if (
-      state.pendingFingerprint === fingerprint &&
-      state.pendingClientSecret &&
-      state.pendingOrderReference
-    ) {
-      setClientSecret(state.pendingClientSecret);
-      setOrderReference(state.pendingOrderReference);
-      setCreating(false);
-      return;
-    }
-
-    state.clearPendingOrder();
-
-    fetch("/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        hotelSlug: slug,
-        format: selectedFormat,
-        cloudinaryPublicId: state.cloudinaryPublicId,
-        croppedImageUrl,
-        message,
-        customerEmail,
-        address,
-        promoCode: promoCode.trim() || undefined,
-      }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to create order");
-        return res.json();
-      })
-      .then((data) => {
-        if (data.isFree) {
-          // Promo code was valid — no Stripe needed
-          setFreeOrderId(data.orderId);
-          setOrderReference(data.orderReference);
-          setPromoApplied(true);
-        } else {
-          setClientSecret(data.clientSecret);
-          setOrderReference(data.orderReference);
-          useOrderStore.getState().setPendingOrder({
-            orderId: data.orderId,
-            clientSecret: data.clientSecret,
-            orderReference: data.orderReference,
-            fingerprint,
-          });
-        }
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setCreating(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleProceed = async () => {
+    setCreating(true);
+    setError(null);
+    const state = useOrderStore.getState();
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hotelSlug: slug,
+          format: selectedFormat,
+          cloudinaryPublicId: state.cloudinaryPublicId,
+          croppedImageUrl,
+          message,
+          customerEmail,
+          address,
+          promoCode: promoCode.trim() || undefined,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to create order");
+      const data = await res.json();
+      if (data.isFree) {
+        setFreeOrderId(data.orderId);
+        setOrderReference(data.orderReference);
+        setPromoApplied(true);
+      } else {
+        setClientSecret(data.clientSecret);
+        setOrderReference(data.orderReference);
+      }
+      setPhase("payment");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setCreating(false);
+    }
+  };
 
   if (!selectedFormat || !croppedImageUrl || !message.trim()) return null;
 
@@ -112,32 +88,6 @@ export default function CheckoutPage() {
         <div className="flex-1 flex flex-col items-center justify-center px-4">
           <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
           <p className="mt-4 text-sand-700 text-sm">{t("checkout.settingUp")}</p>
-        </div>
-      </>
-    );
-  }
-
-  if (error || !clientSecret) {
-    return (
-      <>
-        <ProgressBar currentStep={4} />
-        <div className="flex-1 flex flex-col items-center justify-center px-4 page-fade-in">
-          <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mb-4">
-            <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-            </svg>
-          </div>
-          <p className="font-heading font-semibold text-gray-800 mb-2">{t("checkout.errorTitle")}</p>
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 max-w-sm text-center mb-4">
-            {error || t("checkout.errorDefault")}
-          </div>
-          <button
-            onClick={() => router.back()}
-            className="py-2.5 px-6 rounded-xl border-2 border-sand-300 text-sand-700 text-sm font-medium
-              hover:border-teal hover:text-teal transition-colors min-h-[44px]"
-          >
-            {t("checkout.errorBack")}
-          </button>
         </div>
       </>
     );
@@ -214,23 +164,43 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* ── Promo code field ── */}
-          {!promoApplied && (
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                placeholder="Promo code"
-                className="flex-1 px-4 py-3 rounded-2xl border border-sand-200 bg-white text-gray-900
-                  placeholder:text-sand-400 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20
-                  text-sm shadow-sm uppercase tracking-widest"
-              />
-            </div>
+          {/* ── Phase: summary — promo code + Continue button ── */}
+          {phase === "summary" && (
+            <>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                  placeholder="Promo code (optional)"
+                  className="flex-1 px-4 py-3 rounded-2xl border border-sand-200 bg-white text-gray-900
+                    placeholder:text-sand-400 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20
+                    text-sm shadow-sm uppercase tracking-widest"
+                />
+              </div>
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+
+              <button
+                onClick={handleProceed}
+                className="w-full py-4 px-6 rounded-2xl font-semibold text-base text-white bg-teal
+                  shadow-xl shadow-teal/25 hover:bg-teal-600 active:scale-[0.97] transition-all
+                  flex items-center justify-center gap-2"
+              >
+                {promoCode ? "Apply code & continue" : t("checkout.pay", { price: format.price })}
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </button>
+            </>
           )}
 
-          {/* ── Free order confirm (promo code applied) ── */}
-          {promoApplied && freeOrderId && (
+          {/* ── Phase: payment — free confirm or Stripe ── */}
+          {phase === "payment" && promoApplied && freeOrderId && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-center space-y-4">
               <div className="text-2xl">🎉</div>
               <p className="font-heading font-semibold text-emerald-800 text-lg">Promo code applied!</p>
@@ -258,8 +228,8 @@ export default function CheckoutPage() {
             </div>
           )}
 
-          {/* Stripe Elements — only when not a free promo order */}
-          {!promoApplied && clientSecret && (
+          {/* Stripe Elements — only in payment phase without promo */}
+          {phase === "payment" && !promoApplied && clientSecret && (
             <Elements
               stripe={getStripe()}
               options={{
@@ -296,12 +266,14 @@ export default function CheckoutPage() {
             </Elements>
           )}
 
-          {/* Trust badges */}
-          <div className="flex items-center justify-center gap-4 pt-2">
-            <TrustBadge icon="lock" text={t("checkout.trustSecure")} />
-            <TrustBadge icon="clock" text={t("checkout.trustPrint")} />
-            <TrustBadge icon="globe" text={t("checkout.trustWorldwide")} />
-          </div>
+          {/* Trust badges — only in payment phase */}
+          {phase === "payment" && (
+            <div className="flex items-center justify-center gap-4 pt-2">
+              <TrustBadge icon="lock" text={t("checkout.trustSecure")} />
+              <TrustBadge icon="clock" text={t("checkout.trustPrint")} />
+              <TrustBadge icon="globe" text={t("checkout.trustWorldwide")} />
+            </div>
+          )}
         </div>
       </div>
     </div>
