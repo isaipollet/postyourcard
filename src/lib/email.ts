@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { generatePostcardBackPng } from "@/lib/postcard-back-image";
+import { generatePostcardBackUrl } from "@/lib/postcard-back-image";
 
 const resend = new Resend(process.env.RESEND_API_KEY ?? "re_placeholder");
 
@@ -40,10 +40,11 @@ export async function sendOrderEmails(
   const cityFromHotel = (data.hotelCity ?? "").trim();
   const totalPaid = `€&nbsp;${price.replace(".", ",")}`;
 
-  // Generate postcard back PNG — fail-safe (missing attachment ≠ missing email)
-  let backPngBuffer: Buffer | null = null;
+  // Generate postcard back PNG via Cloudinary — fail-safe (email still sends without it)
+  let backPngUrl: string | null = null;
   try {
-    backPngBuffer = await generatePostcardBackPng({
+    backPngUrl = await generatePostcardBackUrl({
+      orderReference: data.orderReference,
       message: data.message,
       recipientName: data.recipientName,
       recipientStreet: data.recipientStreet,
@@ -88,12 +89,12 @@ export async function sendOrderEmails(
           path: data.croppedImageUrl,
           contentType: "image/jpeg",
         },
-        // Back side — generated PNG (only if generation succeeded)
-        ...(backPngBuffer
+        // Back side — Cloudinary PNG URL (only if generation succeeded)
+        ...(backPngUrl
           ? [
               {
                 filename: `${safeRef}-back.png`,
-                content: backPngBuffer,
+                path: backPngUrl,
                 contentType: "image/png",
               },
             ]
