@@ -426,15 +426,6 @@ export default function UploadPage() {
                   alt="Bruges"
                   className="w-full h-full object-cover object-center"
                 />
-                {/* Gradient overlay with subtle hint text */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent flex flex-col items-center justify-end pb-5 gap-2 px-4">
-                  <p className="text-white font-semibold text-sm drop-shadow-md text-center">
-                    {t("upload.placeholder")}
-                  </p>
-                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full text-[11px] text-white font-medium">
-                    {t(`upload.tip.${format.key}`)}
-                  </span>
-                </div>
               </div>
 
               {/* Action buttons */}
