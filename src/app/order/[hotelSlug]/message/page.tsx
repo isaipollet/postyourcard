@@ -179,7 +179,7 @@ export default function MessagePage() {
                 {/* Message area */}
                 <div className="flex-1 min-w-0">
                   <p className="text-[9px] text-sand-400 uppercase tracking-widest mb-1">{t("message.previewLabel")}</p>
-                  <p className={`${activeFont} text-[15px] text-gray-700 leading-snug min-h-[40px]`}>
+                  <p className={`${activeFont} text-[15px] text-gray-700 leading-snug min-h-[40px] break-words overflow-hidden`}>
                     {message || <span className="text-sand-300 not-italic font-body text-[11px]">{t("message.previewPlaceholder")}</span>}
                   </p>
                 </div>

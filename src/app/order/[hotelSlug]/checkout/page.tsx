@@ -139,7 +139,7 @@ export default function CheckoutPage() {
                 <p className="font-medium text-gray-900">{t(`format.${format.key}.name`)}</p>
                 <p className="text-sm text-sand-700">{format.dimensions}</p>
               </div>
-              <span className="font-heading font-medium text-teal text-lg">
+              <span className={`font-heading font-medium text-lg ${promoApplied ? "line-through text-sand-400" : "text-teal"}`}>
                 {format.price}
               </span>
             </div>
@@ -151,6 +151,18 @@ export default function CheckoutPage() {
             {/* Dotted receipt separator */}
             <div className="border-t-2 border-dotted border-sand-300 my-3" />
 
+            {promoApplied && (
+              <div className="flex justify-between items-center mb-2">
+                <span className="flex items-center gap-1.5 text-sm text-emerald-600 font-medium">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0c1.1.128 1.907 1.077 1.907 2.185z" />
+                  </svg>
+                  Promo code
+                </span>
+                <span className="font-heading font-medium text-emerald-600 text-lg">−{format.price}</span>
+              </div>
+            )}
+
             <div className="flex justify-between items-center">
               <span className="flex items-center gap-1.5 text-sm text-sand-600">
                 <svg className="w-3.5 h-3.5 text-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -158,8 +170,8 @@ export default function CheckoutPage() {
                 </svg>
                 {t("checkout.shippingIncluded")}
               </span>
-              <span className="font-heading font-medium text-gray-900 text-lg">
-                {format.price}
+              <span className="font-heading font-semibold text-gray-900 text-lg">
+                {promoApplied ? "€ 0,00" : format.price}
               </span>
             </div>
           </div>
