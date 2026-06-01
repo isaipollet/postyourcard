@@ -83,77 +83,6 @@ export default function MessagePage() {
         <p className="text-sm text-sand-500 mb-5">{t("message.subtitle")}</p>
 
         <div className="w-full max-w-sm space-y-5">
-          {/* ── Live postcard preview — sticky so it stays visible while filling form ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl border border-sand-200 shadow-md overflow-hidden sticky top-[68px] z-30"
-          >
-            {/* Front side — photo thumbnail */}
-            <div
-              className="relative w-full overflow-hidden bg-sand-50"
-              style={{ aspectRatio: format.aspectRatio }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={croppedImageUrl}
-                alt="Your photo"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-2 left-2">
-                <span className="text-[10px] font-medium text-gray-800 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full shadow-sm">
-                  {t(`format.${format.key}.name`)} · {format.dimensions}
-                </span>
-              </div>
-            </div>
-
-            {/* Back side preview — live updating */}
-            <div className="p-3 border-t border-dashed border-sand-200">
-              <div className="flex gap-3">
-                {/* Message area */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-[9px] text-sand-400 uppercase tracking-widest mb-1">{t("message.previewLabel")}</p>
-                  <p className={`${activeFont} text-[15px] text-gray-700 leading-snug min-h-[40px]`}>
-                    {message || <span className="text-sand-300 not-italic font-body text-[11px]">{t("message.previewPlaceholder")}</span>}
-                  </p>
-                </div>
-                {/* Divider */}
-                <div className="w-px bg-sand-200 self-stretch" />
-                {/* Address area */}
-                <div className="w-[140px] flex-shrink-0 flex flex-col">
-                  {/* Stamp — top right */}
-                  <div className="w-6 h-7 border border-teal/30 rounded-[2px] bg-gradient-to-br from-teal/15 to-teal/5 ml-auto mb-2 flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-teal/40" />
-                  </div>
-
-                  {/* TO label */}
-                  <p className="text-[8px] text-sand-400 uppercase tracking-[0.2em] mb-1">To</p>
-
-                  {/* Address — handwritten font, centered vertically */}
-                  <div className="flex-1 space-y-1">
-                    <p className="font-handwritten text-[14px] text-gray-800 leading-tight break-words">
-                      {address.name || <span className="text-sand-300 font-body text-[10px] not-italic">{t("address.namePlaceholder")}</span>}
-                    </p>
-                    <p className="font-handwritten text-[12px] text-gray-700 leading-tight break-words">
-                      {address.street || <span className="text-sand-300 font-body text-[9px] not-italic">{t("address.streetShort")}</span>}
-                    </p>
-                    <p className="font-handwritten text-[12px] text-gray-700 leading-tight break-words">
-                      {address.postalCode || address.city
-                        ? `${address.postalCode} ${address.city}`.trim()
-                        : <span className="text-sand-300 font-body text-[9px] not-italic">{t("address.cityShort")}</span>
-                      }
-                    </p>
-                    {address.country && (
-                      <p className="text-[9px] text-sand-700 font-bold uppercase tracking-[0.15em] leading-tight pt-0.5">
-                        {COUNTRIES.find((c) => c.code === address.country)?.name || address.country}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
           {/* ── Message textarea ── */}
           <div>
             <label htmlFor="message" className="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
@@ -219,6 +148,77 @@ export default function MessagePage() {
               </div>
             </div>
           </div>
+
+          {/* ── Live postcard preview ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl border border-sand-200 shadow-md overflow-hidden"
+          >
+            {/* Front side — photo thumbnail */}
+            <div
+              className="relative w-full overflow-hidden bg-sand-50"
+              style={{ aspectRatio: format.aspectRatio }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={croppedImageUrl}
+                alt="Your photo"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-2 left-2">
+                <span className="text-[10px] font-medium text-gray-800 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full shadow-sm">
+                  {t(`format.${format.key}.name`)} · {format.dimensions}
+                </span>
+              </div>
+            </div>
+
+            {/* Back side preview — live updating */}
+            <div className="p-3 border-t border-dashed border-sand-200">
+              <div className="flex gap-3">
+                {/* Message area */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-[9px] text-sand-400 uppercase tracking-widest mb-1">{t("message.previewLabel")}</p>
+                  <p className={`${activeFont} text-[15px] text-gray-700 leading-snug min-h-[40px]`}>
+                    {message || <span className="text-sand-300 not-italic font-body text-[11px]">{t("message.previewPlaceholder")}</span>}
+                  </p>
+                </div>
+                {/* Divider */}
+                <div className="w-px bg-sand-200 self-stretch" />
+                {/* Address area */}
+                <div className="w-[140px] flex-shrink-0 flex flex-col">
+                  {/* Stamp — top right */}
+                  <div className="w-6 h-7 border border-teal/30 rounded-[2px] bg-gradient-to-br from-teal/15 to-teal/5 ml-auto mb-2 flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 rounded-full bg-teal/40" />
+                  </div>
+
+                  {/* TO label */}
+                  <p className="text-[8px] text-sand-400 uppercase tracking-[0.2em] mb-1">To</p>
+
+                  {/* Address — handwritten font, centered vertically */}
+                  <div className="flex-1 space-y-1">
+                    <p className="font-handwritten text-[14px] text-gray-800 leading-tight break-words">
+                      {address.name || <span className="text-sand-300 font-body text-[10px] not-italic">{t("address.namePlaceholder")}</span>}
+                    </p>
+                    <p className="font-handwritten text-[12px] text-gray-700 leading-tight break-words">
+                      {address.street || <span className="text-sand-300 font-body text-[9px] not-italic">{t("address.streetShort")}</span>}
+                    </p>
+                    <p className="font-handwritten text-[12px] text-gray-700 leading-tight break-words">
+                      {address.postalCode || address.city
+                        ? `${address.postalCode} ${address.city}`.trim()
+                        : <span className="text-sand-300 font-body text-[9px] not-italic">{t("address.cityShort")}</span>
+                      }
+                    </p>
+                    {address.country && (
+                      <p className="text-[9px] text-sand-700 font-bold uppercase tracking-[0.15em] leading-tight pt-0.5">
+                        {COUNTRIES.find((c) => c.code === address.country)?.name || address.country}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
 
           {/* ── Address section ── */}
           <motion.div
