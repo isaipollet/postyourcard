@@ -9,7 +9,7 @@ import { rateLimit } from "@/lib/rate-limit";
 
 const CreateOrderSchema = z.object({
   hotelSlug: z.string().min(1),
-  format: z.enum(["standard", "large"]),
+  format: z.enum(["standard", "standard-v", "large", "large-v"]),
   cloudinaryPublicId: z.string().min(1),
   croppedImageUrl: z.string().min(1),
   message: z.string().min(1).max(300),

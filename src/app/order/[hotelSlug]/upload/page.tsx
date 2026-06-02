@@ -321,7 +321,7 @@ export default function UploadPage() {
               {t("upload.title")}
             </h3>
             <p className="text-xs text-sand-500 text-center mb-5">
-              {t(`upload.tip.${format.key}`)}
+              {t(`upload.tip.${format.family}`)}
             </p>
             <div className="space-y-3">
               <button
@@ -380,8 +380,8 @@ export default function UploadPage() {
               <div
                 className="rounded-md overflow-hidden border border-sand-200 shadow-sm flex-shrink-0 bg-gradient-to-br from-teal/10 to-sand-100"
                 style={{
-                  width: format.key === "large" ? 48 : 32,
-                  height: format.key === "large" ? 23 : 42,
+                  width: format.aspectRatio >= 1 ? 44 : Math.round(44 * format.aspectRatio),
+                  height: format.aspectRatio >= 1 ? Math.round(44 / format.aspectRatio) : 44,
                 }}
               >
                 <div className="w-full h-full flex items-center justify-center">
@@ -395,14 +395,14 @@ export default function UploadPage() {
                   {t("upload.title")}
                 </h1>
                 <p className="text-xs text-sand-500">
-                  {t(`format.${format.key}.name`)} — {format.dimensions}
+                  {t(`format.${format.family}.name`)} — {format.dimensions}
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className={`w-full mx-auto px-4 pb-8 relative z-10 ${format.key === "large" ? "max-w-sm sm:max-w-[600px]" : "max-w-sm sm:max-w-[440px]"}`}>
+        <div className="w-full mx-auto px-4 pb-8 relative z-10" style={{ maxWidth: format.containerMaxWidth }}>
           {uploadError && (
             <div className="mb-4 bg-red-50 border border-red-200 rounded-2xl p-3 text-sm text-red-700">
               {uploadError}
@@ -503,7 +503,7 @@ export default function UploadPage() {
                       </div>
                       {/* Crop label */}
                       <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap">
-                        {t("upload.cropLabel", { name: t(`format.${format.key}.name`) })}
+                        {t("upload.cropLabel", { name: t(`format.${format.family}.name`) })}
                       </div>
                     </div>
                   </div>
@@ -525,7 +525,7 @@ export default function UploadPage() {
                     animate={{ rotate: [-1, 1, -1] }}
                     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                     className="mx-auto relative"
-                    style={{ maxWidth: format.key === "large" ? "100%" : "80%" }}
+                    style={{ maxWidth: format.orientation === "horizontal" ? "100%" : "80%" }}
                   >
                     <div className="rounded-2xl overflow-hidden border border-sand-200 shadow-2xl bg-white">
                       {/* eslint-disable-next-line @next/next/no-img-element */}

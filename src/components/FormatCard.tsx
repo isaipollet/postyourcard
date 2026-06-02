@@ -13,7 +13,7 @@ export default function FormatCard({
   selected,
   onSelect,
 }: FormatCardProps) {
-  const isLarge = format.key === "large";
+  const isLarge = format.family === "large";
 
   return (
     <button

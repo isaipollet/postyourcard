@@ -17,7 +17,7 @@ interface OrderEmailData {
   message: string;
   croppedImageUrl: string;
   format: string;
-  formatKey: "standard" | "large";
+  formatKey: "standard" | "standard-v" | "large" | "large-v";
   formatDimensions: string;
   hotelName: string;
   hotelEmail: string;
@@ -218,57 +218,72 @@ function customerEmailHtml(d: CustomerHtmlInput): string {
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+@media only screen and (max-width:480px){
+  .pyc-title{font-size:20px!important;letter-spacing:0.12em!important;padding-left:0.12em!important}
+  .pyc-banner{padding:28px 16px 22px!important}
+  .pyc-body{padding:24px 18px 20px!important}
+  .pyc-h1{font-size:22px!important}
+  .pyc-order-card{padding:16px 18px!important}
+  .pyc-col{display:block!important;width:100%!important}
+  .pyc-col-right{text-align:left!important;margin-top:14px!important;padding-top:14px!important;border-top:1px solid #E0D4B6!important}
+  .pyc-ref-val{font-size:18px!important}
+  .pyc-paid-val{font-size:20px!important}
+  .pyc-quote{font-size:15px!important}
+  .pyc-footer{padding:18px 18px 20px!important}
+}
+</style>
 </head>
-<body style="margin:0;padding:30px 16px;background:#e7e0d4;font-family:'Inter',-apple-system,sans-serif;">
+<body style="margin:0;padding:20px 12px;background:#e7e0d4;font-family:'Inter',-apple-system,sans-serif;">
 
-<div style="max-width:580px;margin:0 auto;background:#FAF6EE;border-radius:4px;overflow:hidden;box-shadow:0 30px 80px -20px rgba(107,31,42,0.25),0 0 0 1px rgba(0,0,0,0.04);">
+<div style="max-width:560px;margin:0 auto;background:#FAF6EE;border-radius:4px;overflow:hidden;box-shadow:0 30px 80px -20px rgba(107,31,42,0.25),0 0 0 1px rgba(0,0,0,0.04);">
 
   <!-- Burgundy banner -->
-  <div style="background:#6B1F2A;padding:38px 28px 30px;text-align:center;">
-    <div style="font-family:'Cormorant Garamond',Georgia,serif;color:#C9A961;font-size:32px;font-weight:600;letter-spacing:0.32em;margin:0 0 12px;line-height:1;padding-left:0.32em;">POSTYOURCARD</div>
-    <div style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;color:rgba(255,255,255,0.88);font-size:15px;letter-spacing:0.04em;">
-      <span style="color:#C9A961;font-style:normal;font-size:18px;margin-right:10px;">·</span>${tagline}<span style="color:#C9A961;font-style:normal;font-size:18px;margin-left:10px;">·</span>
+  <div class="pyc-banner" style="background:#6B1F2A;padding:34px 24px 26px;text-align:center;">
+    <div class="pyc-title" style="font-family:'Cormorant Garamond',Georgia,serif;color:#C9A961;font-size:26px;font-weight:600;letter-spacing:0.22em;margin:0 0 10px;line-height:1;padding-left:0.22em;">POSTYOURCARD</div>
+    <div style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;color:rgba(255,255,255,0.88);font-size:14px;letter-spacing:0.03em;">
+      <span style="color:#C9A961;font-style:normal;font-size:16px;margin-right:8px;">·</span>${tagline}<span style="color:#C9A961;font-style:normal;font-size:16px;margin-left:8px;">·</span>
     </div>
   </div>
   <div style="height:2px;background:#C9A961;"></div>
 
   <!-- Body -->
-  <div style="padding:36px 36px 28px;color:#2a1f1f;">
-    <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;color:#6B1F2A;font-weight:600;margin:0 auto 8px;letter-spacing:-0.005em;line-height:1.15;text-align:center;">Your postcard is on its way</h1>
-    <div style="width:56px;height:1px;background:#C9A961;margin:12px auto 26px;opacity:0.7;"></div>
+  <div class="pyc-body" style="padding:30px 28px 24px;color:#2a1f1f;">
+    <h1 class="pyc-h1" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;color:#6B1F2A;font-weight:600;margin:0 auto 8px;letter-spacing:-0.005em;line-height:1.2;text-align:center;">Your postcard is on its way</h1>
+    <div style="width:56px;height:1px;background:#C9A961;margin:10px auto 22px;opacity:0.7;"></div>
 
-    <p style="font-size:15.5px;line-height:1.65;color:#3d2e2e;margin:0 0 14px;">Hello,</p>
-    <p style="font-size:15.5px;line-height:1.65;color:#3d2e2e;margin:0 0 14px;">Thank you for your order. We are carefully printing your <strong style="color:#6B1F2A;font-weight:600;">${escapeHtml(d.format)} postcard</strong> and preparing it for the journey to <strong style="color:#6B1F2A;font-weight:600;">${escapeHtml(d.recipientName)}</strong> in <em style="color:#6B1F2A;font-style:italic;font-weight:500;">${escapeHtml(d.recipientCity)}, ${escapeHtml(d.recipientCountry)}</em>.</p>
+    <p style="font-size:15px;line-height:1.65;color:#3d2e2e;margin:0 0 14px;">Hello,</p>
+    <p style="font-size:15px;line-height:1.65;color:#3d2e2e;margin:0 0 14px;">Thank you for your order. We are carefully printing your <strong style="color:#6B1F2A;font-weight:600;">${escapeHtml(d.format)} postcard</strong> and preparing it for the journey to <strong style="color:#6B1F2A;font-weight:600;">${escapeHtml(d.recipientName)}</strong> in <em style="color:#6B1F2A;font-style:italic;font-weight:500;">${escapeHtml(d.recipientCity)}, ${escapeHtml(d.recipientCountry)}</em>.</p>
 
-    <!-- Order card (2-column) -->
-    <div style="margin:24px 0 22px;padding:20px 26px;background:#ffffff;border:1px solid #E0D4B6;border-radius:6px;">
+    <!-- Order card — stacks on mobile -->
+    <div class="pyc-order-card" style="margin:20px 0 18px;padding:18px 22px;background:#ffffff;border:1px solid #E0D4B6;border-radius:6px;">
       <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;">
         <tr>
-          <td style="width:50%;vertical-align:top;padding:0;">
-            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:11.5px;text-transform:uppercase;letter-spacing:0.22em;color:#B8943E;font-weight:600;margin-bottom:6px;line-height:1;">Order reference</div>
-            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;color:#2a1f1f;font-weight:500;line-height:1;">${escapeHtml(d.orderReference)}</div>
+          <td class="pyc-col" style="vertical-align:top;padding:0;">
+            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:10.5px;text-transform:uppercase;letter-spacing:0.22em;color:#B8943E;font-weight:600;margin-bottom:5px;line-height:1;">Order reference</div>
+            <div class="pyc-ref-val" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;color:#2a1f1f;font-weight:500;line-height:1;word-break:break-all;">${escapeHtml(d.orderReference)}</div>
           </td>
-          <td style="width:50%;vertical-align:top;padding:0;text-align:right;">
-            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:11.5px;text-transform:uppercase;letter-spacing:0.22em;color:#B8943E;font-weight:600;margin-bottom:6px;line-height:1;">Total paid</div>
-            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;color:#6B1F2A;font-weight:700;line-height:1;">${d.totalPaid}</div>
+          <td class="pyc-col pyc-col-right" style="vertical-align:top;padding:0;text-align:right;">
+            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:10.5px;text-transform:uppercase;letter-spacing:0.22em;color:#B8943E;font-weight:600;margin-bottom:5px;line-height:1;">Total paid</div>
+            <div class="pyc-paid-val" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;color:#6B1F2A;font-weight:700;line-height:1;">${d.totalPaid}</div>
           </td>
         </tr>
       </table>
     </div>
 
-    <p style="font-size:14.5px;line-height:1.6;color:#3d2e2e;margin:6px 0 18px;">Your postcard will travel by post and typically arrives within <strong style="color:#6B1F2A;font-weight:600;">5–10 business days</strong>.</p>
+    <p style="font-size:14px;line-height:1.6;color:#3d2e2e;margin:4px 0 16px;">Your postcard will travel by post and typically arrives within <strong style="color:#6B1F2A;font-weight:600;">5–10 business days</strong>.</p>
 
-    <p style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:16pt;color:#6b5757;line-height:1.45;margin:8px 0 4px;">A small piece of your trip, on its way to someone who will love receiving it.</p>
+    <p class="pyc-quote" style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:17px;color:#6b5757;line-height:1.5;margin:6px 0 4px;">A small piece of your trip, on its way to someone who will love receiving it.</p>
   </div>
 
   <!-- Footer -->
-  <div style="border-top:1px solid #E0D4B6;padding:22px 32px 24px;text-align:center;background:#FAF6EE;">
+  <div class="pyc-footer" style="border-top:1px solid #E0D4B6;padding:18px 28px 22px;text-align:center;background:#FAF6EE;">
     <div style="font-size:13px;color:#6b5757;margin:0 0 4px;">Questions? Just reply to this email.</div>
     <a href="mailto:info@postyourcard.com" style="color:#6B1F2A;text-decoration:none;font-weight:500;display:block;margin-top:4px;">info@postyourcard.com</a>
   </div>
 
   <!-- Bottom burgundy strip -->
-  <div style="background:#6B1F2A;height:32px;border-top:2px solid #C9A961;"></div>
+  <div style="background:#6B1F2A;height:28px;border-top:2px solid #C9A961;"></div>
 
 </div>
 </body>

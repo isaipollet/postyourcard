@@ -18,7 +18,7 @@ interface BackData {
   recipientPostal: string;
   recipientCity: string;
   recipientCountry: string;
-  formatKey: "standard" | "large";
+  formatKey: "standard" | "standard-v" | "large" | "large-v";
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -59,22 +59,15 @@ function wrapText(text: string, maxChars: number): string[] {
   return lines;
 }
 
-// ── SVG builder ───────────────────────────────────────────────────────────────
+// ── Landscape SVG (left: message, right: address) ────────────────────────────
 
-function buildSvg(data: BackData): string {
-  // 300dpi dimensions (mm → px: value_mm / 25.4 * 300)
-  //   Standard  148 × 105 mm  →  1748 × 1240 px
-  //   Panoramic 210 ×  99 mm  →  2480 × 1169 px
-  const W = data.formatKey === "large" ? 2480 : 1748;
-  const H = data.formatKey === "large" ? 1169 : 1240;
+function buildLandscapeSvg(data: BackData, W: number, H: number): string {
+  // Scale factor for wider panoramic format
+  const s = W > 2000 ? 1.3 : 1;
 
-  const s = W > 2000 ? 1.3 : 1; // scale factor for the wider Panoramic format
-
-  // Layout
   const pad = Math.round(52 * s);
   const divX = Math.round(W * 0.47); // vertical divider between message ↔ address
 
-  // Font sizes (px)
   const szLabel   = Math.round(20 * s);
   const szMessage = Math.round(32 * s);
   const szFooter  = Math.round(16 * s);
@@ -82,15 +75,14 @@ function buildSvg(data: BackData): string {
   const szAddr    = Math.round(34 * s);
   const szCountry = Math.round(30 * s);
 
-  // ── message word-wrap ──────────────────────────────────────────────────────
-  // Available px width for message text → rough char estimate (Arial ≈ 0.55em)
+  // Message word-wrap
   const msgAreaW = divX - pad * 2;
   const charsPerLine = Math.max(18, Math.floor(msgAreaW / (szMessage * 0.56)));
   const msgLines = wrapText(data.message, charsPerLine);
 
-  const msgStartY   = pad + szLabel + Math.round(36 * s);
-  const msgLineH    = Math.round(szMessage * 1.65);
-  const messageSvg  = msgLines
+  const msgStartY  = pad + szLabel + Math.round(36 * s);
+  const msgLineH   = Math.round(szMessage * 1.65);
+  const messageSvg = msgLines
     .map((line, i) =>
       `  <text x="${pad}" y="${msgStartY + i * msgLineH}" ` +
       `font-family="Liberation Sans,Arial,Helvetica,sans-serif" ` +
@@ -98,20 +90,15 @@ function buildSvg(data: BackData): string {
     )
     .join("\n");
 
-  // ── right-side geometry ───────────────────────────────────────────────────
+  // Right-side geometry
   const rightPad = divX + pad;
-
-  // Stamp box — top right corner
   const stampW = Math.round(86 * s);
   const stampH = Math.round(104 * s);
   const stampX = W - pad - stampW;
   const stampY = pad;
 
-  // Two guide lines below stamp
   const line1Y = stampY + stampH + Math.round(28 * s);
   const line2Y = line1Y + Math.round(22 * s);
-
-  // Address block starts below the guide lines
   const addrY   = line2Y + Math.round(52 * s);
   const addrLnH = Math.round(szAddr * 1.5);
 
@@ -165,6 +152,119 @@ ${messageSvg}
     font-size="${szCountry}" font-weight="bold" fill="#1a1a1a"
     letter-spacing="3">${escapeXml(data.recipientCountry.toUpperCase())}</text>
 </svg>`;
+}
+
+// ── Portrait SVG (top: message, bottom: address) ─────────────────────────────
+
+function buildPortraitSvg(data: BackData, W: number, H: number): string {
+  // Scale factor for taller panoramic portrait
+  const s = H > 2000 ? 1.3 : 1;
+
+  const pad  = Math.round(52 * s);
+  const divY = Math.round(H * 0.45); // horizontal divider
+
+  const szLabel   = Math.round(20 * s);
+  const szMessage = Math.round(32 * s);
+  const szFooter  = Math.round(16 * s);
+  const szName    = Math.round(40 * s);
+  const szAddr    = Math.round(34 * s);
+  const szCountry = Math.round(30 * s);
+
+  // Message word-wrap — available width = full card width minus pads
+  const msgAreaW     = W - pad * 2;
+  const charsPerLine = Math.max(18, Math.floor(msgAreaW / (szMessage * 0.56)));
+  const msgLines     = wrapText(data.message, charsPerLine);
+
+  const msgStartY  = pad + szLabel + Math.round(36 * s);
+  const msgLineH   = Math.round(szMessage * 1.65);
+  const messageSvg = msgLines
+    .map((line, i) =>
+      `  <text x="${pad}" y="${msgStartY + i * msgLineH}" ` +
+      `font-family="Liberation Sans,Arial,Helvetica,sans-serif" ` +
+      `font-size="${szMessage}" fill="#2a1f1f">${escapeXml(line)}</text>`
+    )
+    .join("\n");
+
+  // Bottom area: stamp, guide lines, address
+  const stampW = Math.round(86 * s);
+  const stampH = Math.round(104 * s);
+  const stampX = W - pad - stampW;
+  const stampY = divY + pad;
+
+  const line1Y  = stampY + stampH + Math.round(28 * s);
+  const line2Y  = line1Y + Math.round(22 * s);
+  const addrY   = line2Y + Math.round(52 * s);
+  const addrLnH = Math.round(szAddr * 1.5);
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+  <!-- background -->
+  <rect width="${W}" height="${H}" fill="#fffef9"/>
+  <rect width="${W}" height="${H}" fill="none" stroke="#cccccc" stroke-width="2"/>
+
+  <!-- horizontal divider -->
+  <line x1="32" y1="${divY}" x2="${W - 32}" y2="${divY}" stroke="#aaaaaa" stroke-width="1"/>
+
+  <!-- TOP: section label -->
+  <text x="${pad}" y="${pad + szLabel}"
+    font-family="Liberation Sans,Arial,Helvetica,sans-serif"
+    font-size="${szLabel}" fill="#999999" letter-spacing="4">PERSONAL MESSAGE</text>
+
+  <!-- TOP: message body -->
+${messageSvg}
+
+  <!-- TOP: footer -->
+  <text x="${pad}" y="${divY - Math.round(pad * 0.5)}"
+    font-family="Liberation Sans,Arial,Helvetica,sans-serif"
+    font-size="${szFooter}" fill="#cccccc">PostYourCard.com · Bruges, Belgium</text>
+
+  <!-- BOTTOM: stamp placeholder -->
+  <rect x="${stampX}" y="${stampY}" width="${stampW}" height="${stampH}"
+    fill="none" stroke="#bbbbbb" stroke-width="2" stroke-dasharray="8,5"/>
+
+  <!-- BOTTOM: address guide lines -->
+  <line x1="${pad}" y1="${line1Y}" x2="${stampX - Math.round(20 * s)}" y2="${line1Y}" stroke="#cccccc" stroke-width="1"/>
+  <line x1="${pad}" y1="${line2Y}" x2="${stampX - Math.round(20 * s)}" y2="${line2Y}" stroke="#cccccc" stroke-width="1"/>
+
+  <!-- BOTTOM: recipient name -->
+  <text x="${pad}" y="${addrY}"
+    font-family="Liberation Sans,Arial,Helvetica,sans-serif"
+    font-size="${szName}" font-weight="bold" fill="#1a1a1a">${escapeXml(data.recipientName)}</text>
+
+  <!-- BOTTOM: street -->
+  <text x="${pad}" y="${addrY + addrLnH}"
+    font-family="Liberation Sans,Arial,Helvetica,sans-serif"
+    font-size="${szAddr}" fill="#1a1a1a">${escapeXml(data.recipientStreet)}</text>
+
+  <!-- BOTTOM: postal + city -->
+  <text x="${pad}" y="${addrY + addrLnH * 2}"
+    font-family="Liberation Sans,Arial,Helvetica,sans-serif"
+    font-size="${szAddr}" fill="#1a1a1a">${escapeXml(`${data.recipientPostal} ${data.recipientCity}`)}</text>
+
+  <!-- BOTTOM: country -->
+  <text x="${pad}" y="${addrY + addrLnH * 3}"
+    font-family="Liberation Sans,Arial,Helvetica,sans-serif"
+    font-size="${szCountry}" font-weight="bold" fill="#1a1a1a"
+    letter-spacing="3">${escapeXml(data.recipientCountry.toUpperCase())}</text>
+</svg>`;
+}
+
+// ── SVG dispatcher ────────────────────────────────────────────────────────────
+
+function buildSvg(data: BackData): string {
+  // Print dimensions at 300 dpi (mm / 25.4 * 300, rounded)
+  const dims: Record<BackData["formatKey"], { W: number; H: number }> = {
+    standard:    { W: 1748, H: 1240 }, // 148 × 105 mm — landscape
+    "standard-v": { W: 1240, H: 1748 }, // 105 × 148 mm — portrait
+    large:       { W: 2480, H: 1169 }, // 210 × 99 mm  — landscape
+    "large-v":   { W: 1169, H: 2480 }, // 99 × 210 mm  — portrait
+  };
+
+  const { W, H } = dims[data.formatKey];
+  const isPortrait = data.formatKey === "standard-v" || data.formatKey === "large-v";
+
+  return isPortrait
+    ? buildPortraitSvg(data, W, H)
+    : buildLandscapeSvg(data, W, H);
 }
 
 // ── public API ────────────────────────────────────────────────────────────────

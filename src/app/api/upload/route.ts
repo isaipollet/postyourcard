@@ -6,7 +6,7 @@ import { rateLimit } from "@/lib/rate-limit";
 
 const UploadSchema = z.object({
   imageData: z.string().min(1),
-  format: z.enum(["standard", "large"]),
+  format: z.enum(["standard", "standard-v", "large", "large-v"]),
 });
 
 export async function POST(request: Request) {

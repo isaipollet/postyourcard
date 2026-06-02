@@ -113,7 +113,7 @@ export default function CheckoutPage() {
           {t("checkout.title")}
         </h1>
 
-        <div className={`w-full space-y-6 ${format.key === "large" ? "max-w-sm sm:max-w-[600px]" : "max-w-sm sm:max-w-[440px]"}`}>
+        <div className="w-full space-y-6" style={{ maxWidth: format.containerMaxWidth }}>
           {/* Order summary — receipt style */}
           <div className="bg-white rounded-2xl border-2 border-sand-200 p-4 overflow-hidden">
             <h2 className="font-heading font-semibold text-gray-800 mb-3">
@@ -136,7 +136,7 @@ export default function CheckoutPage() {
 
             <div className="flex justify-between items-start mb-2">
               <div>
-                <p className="font-medium text-gray-900">{t(`format.${format.key}.name`)}</p>
+                <p className="font-medium text-gray-900">{t(`format.${format.family}.name`)}{format.orientation === "vertical" ? ` – ${t("format.orientation.vertical")}` : ""}</p>
                 <p className="text-sm text-sand-700">{format.dimensions}</p>
               </div>
               <span className={`font-heading font-medium text-lg ${promoApplied ? "line-through text-sand-400" : "text-teal"}`}>

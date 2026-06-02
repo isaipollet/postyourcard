@@ -27,9 +27,19 @@ interface PrintOrder {
 }
 
 const FORMAT_LABELS: Record<string, { name: string; dimensions: string; emoji: string }> = {
-  standard: { name: "Standard", dimensions: "105×148 mm", emoji: "📄" },
-  large: { name: "Panoramic", dimensions: "99×210 mm", emoji: "🏞️" },
+  standard:    { name: "Standard (H)",         dimensions: "148×105 mm", emoji: "📄" },
+  "standard-v": { name: "Standard (V)",         dimensions: "105×148 mm", emoji: "📄" },
+  large:       { name: "Panoramic (H)",        dimensions: "210×99 mm",  emoji: "🏞️" },
+  "large-v":   { name: "Panoramic (V)",        dimensions: "99×210 mm",  emoji: "🏞️" },
 };
+
+// For filtering: "standard" family covers standard + standard-v, "large" covers large + large-v
+function matchesFormatFilter(orderFormat: string, filter: string): boolean {
+  if (filter === "all") return true;
+  if (filter === "standard") return orderFormat === "standard" || orderFormat === "standard-v";
+  if (filter === "large") return orderFormat === "large" || orderFormat === "large-v";
+  return orderFormat === filter;
+}
 
 export default function PrintQueuePage() {
   const [orders, setOrders] = useState<PrintOrder[]>([]);
@@ -87,7 +97,7 @@ export default function PrintQueuePage() {
   const filtered = useMemo(() => {
     let out = orders;
     if (formatFilter !== "all") {
-      out = out.filter((o) => o.format === formatFilter);
+      out = out.filter((o) => matchesFormatFilter(o.format, formatFilter));
     }
     if (todayOnly) {
       const startOfDay = new Date();
@@ -98,8 +108,8 @@ export default function PrintQueuePage() {
   }, [orders, formatFilter, todayOnly]);
 
   const stats = useMemo(() => {
-    const standardCount = orders.filter((o) => o.format === "standard").length;
-    const panoramicCount = orders.filter((o) => o.format === "large").length;
+    const standardCount = orders.filter((o) => matchesFormatFilter(o.format, "standard")).length;
+    const panoramicCount = orders.filter((o) => matchesFormatFilter(o.format, "large")).length;
     return { total: orders.length, standardCount, panoramicCount };
   }, [orders]);
 

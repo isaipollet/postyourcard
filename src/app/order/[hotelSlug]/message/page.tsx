@@ -82,7 +82,7 @@ export default function MessagePage() {
         </h1>
         <p className="text-sm text-sand-500 mb-5">{t("message.subtitle")}</p>
 
-        <div className={`w-full space-y-5 ${format.key === "large" ? "max-w-sm sm:max-w-[600px]" : "max-w-sm sm:max-w-[440px]"}`}>
+        <div className="w-full space-y-5" style={{ maxWidth: format.containerMaxWidth }}>
           {/* ── Message textarea ── */}
           <div>
             <label htmlFor="message" className="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
@@ -168,7 +168,7 @@ export default function MessagePage() {
               />
               <div className="absolute bottom-2 left-2">
                 <span className="text-[10px] font-medium text-gray-800 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full shadow-sm">
-                  {t(`format.${format.key}.name`)} · {format.dimensions}
+                  {t(`format.${format.family}.name`)}{format.orientation === "vertical" ? ` (${t("format.orientation.vertical")})` : ""} · {format.dimensions}
                 </span>
               </div>
             </div>

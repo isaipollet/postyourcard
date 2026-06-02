@@ -67,7 +67,7 @@ export const orders = pgTable(
   (table) => [
     check(
       "format_check",
-      sql`${table.format} IN ('standard', 'large')`
+      sql`${table.format} IN ('standard', 'standard-v', 'large', 'large-v')`
     ),
     check(
       "status_check",

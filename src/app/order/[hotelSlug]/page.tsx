@@ -20,6 +20,56 @@ interface Hotel {
 
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1742420999707-e2afe589a07c?w=1600&h=1000&fit=crop&crop=center&q=85";
 
+// 4 individual format cards — 2 per family row, each with its own Bruges photo
+const FORMAT_OPTIONS = [
+  {
+    family: "standard" as const,
+    familyTitleKey: "format.standard.name" as const,
+    photoHeight: 118,
+    items: [
+      {
+        key: "standard" as PostcardFormat,
+        labelKey: "format.orientation.horizontal" as const,
+        dims: "148 × 105 mm",
+        imageUrl: "https://images.unsplash.com/photo-1572895854902-117546c75fb3?w=360&h=240&fit=crop&crop=center&q=85",
+        shapeW: 22,
+        shapeH: 16,
+      },
+      {
+        key: "standard-v" as PostcardFormat,
+        labelKey: "format.orientation.vertical" as const,
+        dims: "105 × 148 mm",
+        imageUrl: "https://images.unsplash.com/photo-1601961208755-3519c8a31ded?w=240&h=340&fit=crop&crop=center&q=85",
+        shapeW: 16,
+        shapeH: 22,
+      },
+    ],
+  },
+  {
+    family: "large" as const,
+    familyTitleKey: "format.large.name" as const,
+    photoHeight: 88,
+    items: [
+      {
+        key: "large" as PostcardFormat,
+        labelKey: "format.orientation.horizontal" as const,
+        dims: "210 × 99 mm",
+        imageUrl: "https://images.unsplash.com/photo-1578412663269-214d1df31cd8?w=400&h=188&fit=crop&crop=center&q=85",
+        shapeW: 28,
+        shapeH: 13,
+      },
+      {
+        key: "large-v" as PostcardFormat,
+        labelKey: "format.orientation.vertical" as const,
+        dims: "99 × 210 mm",
+        imageUrl: "https://images.unsplash.com/photo-1588008306645-7a6d62063f55?w=240&h=400&fit=crop&crop=center&q=85",
+        shapeW: 13,
+        shapeH: 28,
+      },
+    ],
+  },
+] as const;
+
 export default function HotelLandingPage() {
   const params = useParams();
   const router = useRouter();
@@ -79,7 +129,7 @@ export default function HotelLandingPage() {
 
         {/* Content — vertically centered title group */}
         <div className="relative z-10 flex flex-col items-center justify-center px-4 py-12" style={{ minHeight: "520px" }}>
-          {/* Eyebrow — small uppercase gold label, Bruges Audio Tour style */}
+          {/* Eyebrow */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -96,7 +146,7 @@ export default function HotelLandingPage() {
             <span className="block w-7 h-px bg-[#E8C47A]" />
           </motion.div>
 
-          {/* Hotel name — Cormorant light, italic emphasis */}
+          {/* Hotel name */}
           {loading ? (
             <div className="h-12 w-56 bg-white/20 animate-pulse rounded-lg mx-auto mb-2" />
           ) : (
@@ -205,93 +255,101 @@ export default function HotelLandingPage() {
             {t("format.title")}
           </motion.h2>
 
-          <div className="space-y-5">
-            {(Object.values(FORMATS) as typeof FORMATS[PostcardFormat][]).map((format, i) => (
-              <motion.button
-                key={format.key}
+          <div className="space-y-6">
+            {FORMAT_OPTIONS.map((group, gi) => (
+              <motion.div
+                key={group.family}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.55 + 0.12 * i, duration: 0.5 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => { hapticTap(); setFormat(format.key); }}
-                className={`w-full text-left rounded-3xl overflow-hidden transition-all duration-400 relative ${
-                  selectedFormat === format.key
-                    ? "shadow-xl shadow-teal/15 ring-2 ring-teal"
-                    : "shadow-md hover:shadow-lg"
-                }`}
+                transition={{ delay: 0.55 + 0.12 * gi, duration: 0.5 }}
               >
-                {/* Split layout: photo left, text right overlapping */}
-                <div className={`flex ${format.key === "large" ? "flex-col" : "min-h-[180px]"}`}>
-                  {/* Photo */}
-                  <div className={`relative overflow-hidden ${
-                    format.key === "large" ? "w-full h-[140px]" : "w-[45%]"
-                  }`}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={format.key === "standard"
-                        ? "https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=400&h=500&fit=crop&crop=center&q=80"
-                        : "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=500&h=400&fit=crop&crop=center&q=80"
-                      }
-                      alt={`${t(`format.${format.key}.name`)} preview`}
-                      className={`w-full h-full object-cover transition-all duration-700 ${
-                        selectedFormat === format.key ? "scale-105 saturate-100" : "scale-100 saturate-[0.7]"
-                      }`}
-                    />
-                    {/* Photo only — no shape indicator here */}
-                  </div>
+                {/* Family label */}
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#6B1F2A]/40 mb-2.5 ml-0.5">
+                  {t(group.familyTitleKey)}
+                </p>
 
-                  {/* Text panel — overlaps the photo slightly */}
-                  <div className={`${
-                    format.key === "large"
-                      ? "w-full -mt-4 rounded-t-3xl p-5"
-                      : "w-[60%] -ml-[5%] rounded-l-3xl p-5"
-                  } flex flex-col justify-center relative z-10 transition-colors duration-300 ${
-                    selectedFormat === format.key
-                      ? "bg-white/95 backdrop-blur-sm"
-                      : "bg-[#FAFAF7]/95 backdrop-blur-sm"
-                  }`}>
-                    <p className="uppercase tracking-[0.2em] text-[9px] text-[#6B1F2A]/50 font-bold mb-1.5">
-                      {format.key === "standard" ? t("format.standard.tag") : t("format.large.tag")}
-                    </p>
-                    <h3 className="font-heading text-[22px] font-medium text-gray-900 leading-tight mb-1.5">
-                      {t(`format.${format.key}.name`)}
-                    </h3>
-                    <div className="flex items-center gap-2 mb-1">
-                      <div
-                        className="border-2 border-[#6B1F2A]/30 rounded-sm bg-[#6B1F2A]/[0.06]"
-                        style={{
-                          width: format.key === "large" ? 28 : 16,
-                          height: format.key === "large" ? 13 : 22,
-                        }}
-                      />
-                      <p className="text-[12px] text-gray-500">{format.dimensions}</p>
-                    </div>
-                    <p className="text-[11px] text-gray-400 leading-relaxed mb-3">
-                      {t(`format.${format.key}.description`)}
-                    </p>
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-heading text-[22px] font-medium text-[#6B1F2A] tabular-nums">
-                        {format.price}
-                      </span>
-                      <span className="text-[10px] text-gray-400">{t("format.shippingIncluded")}</span>
-                    </div>
-                  </div>
+                {/* 2-card side-by-side row */}
+                <div className="grid grid-cols-2 gap-2.5">
+                  {group.items.map((item) => {
+                    const isSelected = selectedFormat === item.key;
+                    return (
+                      <button
+                        key={item.key}
+                        onClick={() => { hapticTap(); setFormat(item.key); }}
+                        className={`relative rounded-2xl overflow-hidden text-left transition-all duration-200 ${
+                          isSelected
+                            ? "ring-2 ring-teal shadow-xl shadow-teal/20"
+                            : "ring-1 ring-black/[0.07] shadow-md hover:shadow-lg hover:ring-teal/30"
+                        }`}
+                      >
+                        {/* Photo area */}
+                        <div className="relative w-full overflow-hidden" style={{ height: group.photoHeight }}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.imageUrl}
+                            alt=""
+                            className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
+                              isSelected ? "scale-105 saturate-100" : "scale-100 saturate-[0.72]"
+                            }`}
+                          />
+                          {/* Bottom fade for legibility */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+                        </div>
+
+                        {/* Info strip */}
+                        <div className={`px-3 py-2.5 transition-colors duration-200 ${
+                          isSelected ? "bg-teal" : "bg-white"
+                        }`}>
+                          <div className="flex items-center gap-2">
+                            {/* Postcard shape indicator */}
+                            <div
+                              className={`rounded-[2px] border-[1.5px] flex-shrink-0 ${
+                                isSelected ? "border-white/65" : "border-gray-300"
+                              }`}
+                              style={{ width: item.shapeW, height: item.shapeH }}
+                            />
+                            {/* Label + dims */}
+                            <div className="flex flex-col gap-[3px] min-w-0">
+                              <span className={`text-[11px] font-bold leading-none truncate ${
+                                isSelected ? "text-white" : "text-gray-800"
+                              }`}>
+                                {t(item.labelKey)}
+                              </span>
+                              <span className={`text-[9px] leading-none truncate ${
+                                isSelected ? "text-white/70" : "text-gray-400"
+                              }`}>
+                                {item.dims}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Selected checkmark badge */}
+                        {isSelected && (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 320 }}
+                            className="absolute top-2 right-2 w-6 h-6 bg-teal rounded-full flex items-center justify-center shadow-lg"
+                          >
+                            <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </motion.div>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
 
-                {/* Selected checkmark */}
-                {selectedFormat === format.key && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                    className="absolute top-3 right-3 w-7 h-7 bg-teal rounded-full flex items-center justify-center shadow-lg z-20"
-                  >
-                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </motion.div>
-                )}
-              </motion.button>
+                {/* Price row for this family */}
+                <div className="flex items-baseline gap-1.5 mt-2 ml-0.5">
+                  <span className="font-heading text-[17px] font-medium text-[#6B1F2A] tabular-nums">
+                    {FORMATS[group.items[0].key].price}
+                  </span>
+                  <span className="text-[10px] text-gray-400">{t("format.shippingIncluded")}</span>
+                </div>
+              </motion.div>
             ))}
           </div>
 

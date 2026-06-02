@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export type PostcardFormat = "standard" | "large";
+export type PostcardFormat = "standard" | "standard-v" | "large" | "large-v";
 export type MessageFont = "caveat" | "patrick-hand" | "dancing-script" | "kalam";
 
 export interface Address {

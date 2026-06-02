@@ -123,7 +123,7 @@ export async function GET(request: Request) {
         message: o.message ?? "",
         croppedImageUrl: o.croppedImageUrl!,
         format: formatInfo?.name ?? o.format,
-        formatKey: (o.format === "large" ? "large" : "standard") as "standard" | "large",
+        formatKey: o.format as "standard" | "standard-v" | "large" | "large-v",
         formatDimensions: formatInfo?.dimensions ?? "",
         hotelName: o.hotelName,
         hotelEmail: o.hotelEmail,
