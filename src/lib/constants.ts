@@ -3,7 +3,7 @@ import { PostcardFormat } from "@/store/order";
 /** Centralized pricing — change here and it updates everywhere */
 export const PRICE_CENTS = 799;
 export const COMMISSION_CENTS = 160;
-export const PRICE_DISPLAY = "€7.99";
+export const PRICE_DISPLAY = "€7,99";
 export const PRICE_VALUE = 7.99;
 
 export interface FormatInfo {

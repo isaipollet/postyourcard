@@ -330,7 +330,7 @@ function BoldFlyer({ hotel, heroImage, qr }: { hotel: Hotel; heroImage: string; 
             </div>
             <div className="text-right">
               <p className="text-white text-[56px] font-bold leading-none" style={{ fontFamily: serif }}>
-                {PRICE_DISPLAY.replace("€", "")}&euro;
+                {PRICE_DISPLAY}
               </p>
               <p className="text-white/70 text-xs mt-1" style={{ fontFamily: sans, textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>
                 Shipping included worldwide
