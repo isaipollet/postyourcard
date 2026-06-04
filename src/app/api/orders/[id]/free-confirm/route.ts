@@ -38,6 +38,7 @@ export async function POST(
       hotelName: hotels.name,
       hotelEmail: hotels.email,
       hotelCity: hotels.city,
+      hotelLogoUrl: hotels.logoUrl,
     })
     .from(orders)
     .innerJoin(hotels, eq(orders.hotelId, hotels.id))
@@ -72,6 +73,7 @@ export async function POST(
       hotelName: order.hotelName,
       hotelEmail: order.hotelEmail,
       hotelCity: order.hotelCity,
+      hotelLogoUrl: order.hotelLogoUrl,
       commissionCents: 0,
       priceCents: 0,
     });
