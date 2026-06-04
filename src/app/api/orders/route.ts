@@ -140,7 +140,7 @@ export async function POST(request: Request) {
     const params: Parameters<typeof stripe.paymentIntents.create>[0] = {
       amount: PRICE_CENTS,
       currency: "eur",
-      payment_method_types: ["card", "bancontact"],
+      automatic_payment_methods: { enabled: true, allow_redirects: "always" },
       metadata: {
         order_id: order.id,
         order_reference: orderReference,
