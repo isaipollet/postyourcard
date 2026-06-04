@@ -68,20 +68,39 @@ function buildLogoSvg(logoDataUri: string | null | undefined, x: number, y: numb
   return `  <image href="${escapeXml(logoDataUri)}" x="${x}" y="${y}" width="${maxW}" height="${maxH}" preserveAspectRatio="xMinYMid meet" opacity="0.9"/>`;
 }
 
-/** Fetch an external image URL and return it as a base64 data-URI so it can be
- *  embedded directly in the SVG — Cloudinary cannot fetch external URLs during
- *  SVG→PNG conversion, so we must inline the image bytes. */
-async function fetchLogoAsDataUri(url: string): Promise<string | null> {
+/**
+ * Upload the logo to Cloudinary (SVG→PNG conversion), then fetch the resulting
+ * PNG bytes and return them as a `data:image/png;base64,...` URI.
+ *
+ * Why: Cloudinary's librsvg SVG→PNG converter renders PNG data-URIs inside
+ * <image> tags reliably, but NOT SVG data-URIs or external http URLs.
+ */
+async function getLogoPngDataUri(
+  logoUrl: string,
+  cld: typeof cloudinary
+): Promise<string | null> {
   try {
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) return null;
-    const contentType = res.headers.get("content-type") ?? "image/png";
-    const buffer = await res.arrayBuffer();
-    const b64 = Buffer.from(buffer).toString("base64");
-    // Normalise SVG mime type
-    const mime = contentType.includes("svg") ? "image/svg+xml" : contentType.split(";")[0];
-    return `data:${mime};base64,${b64}`;
-  } catch {
+    // 1. Upload logo to Cloudinary — it converts SVG → PNG automatically.
+    const logoHash = Buffer.from(logoUrl)
+      .toString("base64")
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(0, 40);
+    const logoPublicId = `postyourcard-logos/${logoHash}`;
+
+    const upload = await cld.uploader.upload(logoUrl, {
+      public_id: logoPublicId,
+      overwrite: true,
+      resource_type: "image",
+      format: "png",
+    });
+
+    // 2. Fetch the Cloudinary PNG and base64-encode it.
+    const pngRes = await fetch(upload.secure_url);
+    if (!pngRes.ok) return null;
+    const buf = await pngRes.arrayBuffer();
+    return `data:image/png;base64,${Buffer.from(buf).toString("base64")}`;
+  } catch (err) {
+    console.error("[postcard-back] logo PNG fetch failed:", err);
     return null;
   }
 }
@@ -305,72 +324,28 @@ function buildSvg(data: BackData): string {
  * Upload is idempotent: same `public_id` overwrites the previous version.
  */
 export async function generatePostcardBackUrl(data: BackData): Promise<string> {
-  // Build SVG without logo (Cloudinary cannot render SVG <image> tags)
-  const svgString = buildSvg({ ...data, logoDataUri: null });
+  // If a logo URL is provided, convert it to a PNG data-URI via Cloudinary.
+  // librsvg (used by Cloudinary) renders PNG data-URIs in SVG <image> tags reliably.
+  let logoDataUri: string | null = null;
+  if (data.logoUrl) {
+    logoDataUri = await getLogoPngDataUri(data.logoUrl, cloudinary);
+    console.log("[postcard-back] logoDataUri obtained:", logoDataUri ? `${logoDataUri.slice(0, 60)}…` : "null");
+  }
+
+  // Build SVG with the logo PNG embedded as a data-URI (or without logo if fetch failed)
+  const svgString = buildSvg({ ...data, logoDataUri });
   const base64 = Buffer.from(svgString, "utf8").toString("base64");
   const dataUri = `data:image/svg+xml;base64,${base64}`;
 
   const publicId = `postyourcard-backs/${data.orderReference.replace(/[^a-zA-Z0-9_-]/g, "_")}-back`;
 
-  // ── No logo: simple upload ────────────────────────────────────────────────────
-  if (!data.logoUrl) {
-    const result = await cloudinary.uploader.upload(dataUri, {
-      resource_type: "image",
-      public_id: publicId,
-      overwrite: true,
-      format: "png",
-      quality: 90,
-    });
-    return result.secure_url;
-  }
-
-  // ── With logo: upload logo first, then upload base SVG with eager overlay ─────
-
-  // 1. Upload logo to Cloudinary under a stable public_id (idempotent)
-  const logoHash = Buffer.from(data.logoUrl).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(0, 40);
-  const logoPublicId = `postyourcard-logos/${logoHash}`;
-  // Cloudinary overlay ref uses ":" instead of "/"
-  const logoOverlayRef = `postyourcard-logos:${logoHash}`;
-
-  try {
-    await cloudinary.uploader.upload(data.logoUrl, {
-      public_id: logoPublicId,
-      overwrite: false,   // skip if already uploaded
-      resource_type: "image",
-      format: "png",      // convert SVG → PNG so overlay works
-    });
-  } catch (e) {
-    console.warn("Logo upload skipped (may already exist):", e);
-  }
-
-  // 2. Determine logo width (~13% of card width at print resolution)
-  const cardWidths: Record<BackData["formatKey"], number> = {
-    standard: 1748, "standard-v": 1240, large: 2480, "large-v": 1169,
-  };
-  const logoW = Math.round((cardWidths[data.formatKey] ?? 1748) * 0.13);
-
-  // 3. Upload base SVG→PNG with eager overlay (baked in at upload time)
   const result = await cloudinary.uploader.upload(dataUri, {
     resource_type: "image",
     public_id: publicId,
     overwrite: true,
     format: "png",
     quality: 90,
-    eager: [
-      {
-        overlay: logoOverlayRef,
-        gravity: "south_east",
-        x: 60,
-        y: 60,
-        width: logoW,
-        crop: "fit",
-        format: "png",
-        quality: 90,
-      },
-    ],
-    eager_async: false,  // generate synchronously so URL is ready immediately
   });
 
-  // Return the eager (logo-composited) version if available, else fallback
-  return (result.eager?.[0]?.secure_url as string | undefined) ?? result.secure_url;
+  return result.secure_url;
 }
