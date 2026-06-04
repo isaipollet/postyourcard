@@ -166,6 +166,16 @@ export default function MessagePage() {
                 alt="Your photo"
                 className="w-full h-full object-cover"
               />
+              {/* Hotel logo — top left of front preview */}
+              {hotelLogoUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={hotelLogoUrl}
+                  alt=""
+                  className="absolute top-2 left-2 h-7 max-w-[90px] object-contain opacity-90"
+                  style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.4))" }}
+                />
+              )}
               <div className="absolute bottom-2 left-2">
                 <span className="text-[10px] font-medium text-gray-800 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full shadow-sm">
                   {t(`format.${format.family}.name`)}{format.orientation === "vertical" ? ` (${t("format.orientation.vertical")})` : ""} · {format.dimensions}

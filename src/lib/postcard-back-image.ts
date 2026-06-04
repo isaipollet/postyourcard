@@ -376,33 +376,18 @@ export async function generateFrontWithLogoUrl(
       format: "png",
     });
 
-    // 2. Extract the photo's public_id from its Cloudinary URL.
-    //    URL shape: https://res.cloudinary.com/{cloud}/image/upload/{version?}/{publicId}.{ext}
-    const match = croppedImageUrl.match(/\/image\/upload\/(?:v\d+\/)?(.+?)(?:\.[a-z]+)?$/);
-    if (!match) return croppedImageUrl;
-    const photoPublicId = match[1];
-
-    // 3. Build a Cloudinary transformation URL:
-    //    overlay the logo top-left (north_west), max width 220px, 85% opacity.
-    //    Cloudinary overlay syntax: replace '/' with ':' in public_id.
+    // 2. Insert overlay transformation directly into the existing Cloudinary URL.
+    //    This preserves any existing transformations in the URL and avoids
+    //    public_id extraction issues.
+    //    Cloudinary overlay syntax: '/' in public_id → ':'
     const overlayId = logoPublicId.replace(/\//g, ":");
-    const transformedUrl = cloudinary.url(photoPublicId, {
-      transformation: [
-        {
-          overlay: overlayId,
-          gravity: "north_west",
-          x: 30,
-          y: 30,
-          width: 220,
-          crop: "fit",
-          opacity: 85,
-        },
-        { flags: "layer_apply" },
-      ],
-      format: "jpg",
-      quality: 90,
-      secure: true,
-    });
+    const overlayTransform = `l_${overlayId},g_north_west,x_40,y_40,w_220,c_fit,o_90,fl_layer_apply`;
+
+    // Insert after '/upload/' in the URL
+    const transformedUrl = croppedImageUrl.replace(
+      "/image/upload/",
+      `/image/upload/${overlayTransform}/`
+    );
 
     return transformedUrl;
   } catch (err) {
