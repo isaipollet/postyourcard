@@ -98,6 +98,7 @@ export async function GET(request: Request) {
       hotelName: hotels.name,
       hotelEmail: hotels.email,
       hotelCity: hotels.city,
+      hotelLogoUrl: hotels.logoUrl,
     })
     .from(orders)
     .innerJoin(hotels, eq(orders.hotelId, hotels.id))
@@ -128,6 +129,7 @@ export async function GET(request: Request) {
         hotelName: o.hotelName,
         hotelEmail: o.hotelEmail,
         hotelCity: o.hotelCity,
+        hotelLogoUrl: o.hotelLogoUrl,
         commissionCents: o.commissionCents,
         priceCents: o.priceCents,
       });
