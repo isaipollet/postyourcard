@@ -17,7 +17,7 @@ export default function MessagePage() {
   const router = useRouter();
   const slug = params.hotelSlug as string;
 
-  const { selectedFormat, croppedImageUrl, message, messageFont, customerEmail, address, setMessage, setMessageFont, setCustomerEmail, setAddress } =
+  const { selectedFormat, croppedImageUrl, message, messageFont, customerEmail, address, hotelLogoUrl, setMessage, setMessageFont, setCustomerEmail, setAddress } =
     useOrderStore();
   const { t } = useLanguage();
 
@@ -215,6 +215,16 @@ export default function MessagePage() {
                       </p>
                     )}
                   </div>
+
+                  {/* Hotel logo — bottom right of preview */}
+                  {hotelLogoUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={hotelLogoUrl}
+                      alt=""
+                      className="mt-2 h-6 max-w-[80px] object-contain self-end ml-auto opacity-80"
+                    />
+                  )}
                 </div>
               </div>
             </div>

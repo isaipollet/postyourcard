@@ -75,7 +75,7 @@ export default function HotelLandingPage() {
   const router = useRouter();
   const slug = params.hotelSlug as string;
 
-  const { selectedFormat, setFormat, reset } = useOrderStore();
+  const { selectedFormat, setFormat, reset, setHotelLogoUrl } = useOrderStore();
   const { t } = useLanguage();
   const [hotel, setHotel] = useState<Hotel | null>(null);
   const [loading, setLoading] = useState(true);
@@ -87,8 +87,8 @@ export default function HotelLandingPage() {
         if (!res.ok) throw new Error("Hotel not found");
         return res.json();
       })
-      .then((data) => setHotel(data))
-      .catch(() => setHotel({ name: slug.replace(/-/g, " "), logoUrl: null, heroImageUrl: null, city: null, website: null, welcomeMessage: null }))
+      .then((data) => { setHotel(data); setHotelLogoUrl(data.logoUrl ?? null); })
+      .catch(() => { setHotel({ name: slug.replace(/-/g, " "), logoUrl: null, heroImageUrl: null, city: null, website: null, welcomeMessage: null }); setHotelLogoUrl(null); })
       .finally(() => setLoading(false));
   }, [slug, reset]);
 

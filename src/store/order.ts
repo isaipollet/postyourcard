@@ -20,12 +20,14 @@ interface OrderState {
   messageFont: MessageFont;
   customerEmail: string;
   address: Address;
+  hotelLogoUrl: string | null;
 
   pendingOrderId: string | null;
   pendingClientSecret: string | null;
   pendingOrderReference: string | null;
   pendingFingerprint: string | null;
 
+  setHotelLogoUrl: (url: string | null) => void;
   setFormat: (format: PostcardFormat) => void;
   setCloudinaryPublicId: (id: string) => void;
   setCroppedImageUrl: (url: string) => void;
@@ -61,12 +63,14 @@ export const useOrderStore = create<OrderState>()(
       messageFont: "caveat",
       customerEmail: "",
       address: { ...initialAddress },
+      hotelLogoUrl: null,
 
       pendingOrderId: null,
       pendingClientSecret: null,
       pendingOrderReference: null,
       pendingFingerprint: null,
 
+      setHotelLogoUrl: (url) => set({ hotelLogoUrl: url }),
       setFormat: (format) => set({ selectedFormat: format }),
       setCloudinaryPublicId: (id) => set({ cloudinaryPublicId: id }),
       setCroppedImageUrl: (url) => set({ croppedImageUrl: url }),
@@ -98,6 +102,7 @@ export const useOrderStore = create<OrderState>()(
           messageFont: "caveat",
           customerEmail: "",
           address: { ...initialAddress },
+          hotelLogoUrl: null,
           pendingOrderId: null,
           pendingClientSecret: null,
           pendingOrderReference: null,
