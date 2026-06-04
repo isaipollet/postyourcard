@@ -305,66 +305,72 @@ function buildSvg(data: BackData): string {
  * Upload is idempotent: same `public_id` overwrites the previous version.
  */
 export async function generatePostcardBackUrl(data: BackData): Promise<string> {
-  // Build the SVG without the logo (Cloudinary does not render <image> tags in SVGs)
+  // Build SVG without logo (Cloudinary cannot render SVG <image> tags)
   const svgString = buildSvg({ ...data, logoDataUri: null });
   const base64 = Buffer.from(svgString, "utf8").toString("base64");
   const dataUri = `data:image/svg+xml;base64,${base64}`;
 
-  // Safe public_id (no special chars)
   const publicId = `postyourcard-backs/${data.orderReference.replace(/[^a-zA-Z0-9_-]/g, "_")}-back`;
 
-  // Upload the base SVG → PNG
+  // ── No logo: simple upload ────────────────────────────────────────────────────
+  if (!data.logoUrl) {
+    const result = await cloudinary.uploader.upload(dataUri, {
+      resource_type: "image",
+      public_id: publicId,
+      overwrite: true,
+      format: "png",
+      quality: 90,
+    });
+    return result.secure_url;
+  }
+
+  // ── With logo: upload logo first, then upload base SVG with eager overlay ─────
+
+  // 1. Upload logo to Cloudinary under a stable public_id (idempotent)
+  const logoHash = Buffer.from(data.logoUrl).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(0, 40);
+  const logoPublicId = `postyourcard-logos/${logoHash}`;
+  // Cloudinary overlay ref uses ":" instead of "/"
+  const logoOverlayRef = `postyourcard-logos:${logoHash}`;
+
+  try {
+    await cloudinary.uploader.upload(data.logoUrl, {
+      public_id: logoPublicId,
+      overwrite: false,   // skip if already uploaded
+      resource_type: "image",
+      format: "png",      // convert SVG → PNG so overlay works
+    });
+  } catch (e) {
+    console.warn("Logo upload skipped (may already exist):", e);
+  }
+
+  // 2. Determine logo width (~13% of card width at print resolution)
+  const cardWidths: Record<BackData["formatKey"], number> = {
+    standard: 1748, "standard-v": 1240, large: 2480, "large-v": 1169,
+  };
+  const logoW = Math.round((cardWidths[data.formatKey] ?? 1748) * 0.13);
+
+  // 3. Upload base SVG→PNG with eager overlay (baked in at upload time)
   const result = await cloudinary.uploader.upload(dataUri, {
     resource_type: "image",
     public_id: publicId,
     overwrite: true,
     format: "png",
     quality: 90,
-  });
-
-  // If no logo, return the plain back image
-  if (!data.logoUrl) return result.secure_url;
-
-  // ── Logo overlay via Cloudinary transformation ───────────────────────────────
-  // Upload the logo once under a stable public_id so it can be used as overlay.
-  // `overwrite: false` skips the upload if it already exists.
-  const logoPublicId = `postyourcard-logos/${Buffer.from(data.logoUrl).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(0, 40)}`;
-  try {
-    await cloudinary.uploader.upload(data.logoUrl, {
-      public_id: logoPublicId,
-      overwrite: false,
-      resource_type: "image",
-    });
-  } catch {
-    // already exists or fetch failed — continue anyway
-  }
-
-  // Determine print dimensions for this format so we can size the overlay
-  const dims: Record<BackData["formatKey"], { W: number; H: number }> = {
-    standard:     { W: 1748, H: 1240 },
-    "standard-v": { W: 1240, H: 1748 },
-    large:        { W: 2480, H: 1169 },
-    "large-v":    { W: 1169, H: 2480 },
-  };
-  const { W } = dims[data.formatKey];
-  const logoW = Math.round(W * 0.13); // ~13% of card width
-
-  // Return URL with overlay applied bottom-right (gravity south_east)
-  const overlayUrl = cloudinary.url(publicId, {
-    transformation: [
+    eager: [
       {
-        overlay: logoPublicId.replace(/\//g, ":"), // Cloudinary uses : as path separator in overlays
+        overlay: logoOverlayRef,
         gravity: "south_east",
         x: 60,
         y: 60,
         width: logoW,
         crop: "fit",
+        format: "png",
+        quality: 90,
       },
     ],
-    format: "png",
-    quality: 90,
-    secure: true,
+    eager_async: false,  // generate synchronously so URL is ready immediately
   });
 
-  return overlayUrl;
+  // Return the eager (logo-composited) version if available, else fallback
+  return (result.eager?.[0]?.secure_url as string | undefined) ?? result.secure_url;
 }
