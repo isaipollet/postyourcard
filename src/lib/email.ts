@@ -22,6 +22,7 @@ interface OrderEmailData {
   hotelName: string;
   hotelEmail: string;
   hotelCity?: string | null;
+  hotelLogoUrl?: string | null;
   commissionCents: number;
   priceCents: number;
 }
@@ -52,6 +53,7 @@ export async function sendOrderEmails(
       recipientCity: data.recipientCity,
       recipientCountry: data.recipientCountry,
       formatKey: data.formatKey,
+      logoUrl: data.hotelLogoUrl,
     });
   } catch (err) {
     console.error("Failed to generate postcard back PNG:", err);

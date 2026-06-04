@@ -88,6 +88,7 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
       hotelName: hotels.name,
       hotelEmail: hotels.email,
       hotelCity: hotels.city,
+      hotelLogoUrl: hotels.logoUrl,
     })
     .from(orders)
     .innerJoin(hotels, eq(orders.hotelId, hotels.id))
@@ -143,6 +144,7 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
       hotelName: order.hotelName,
       hotelEmail: order.hotelEmail,
       hotelCity: order.hotelCity,
+      hotelLogoUrl: order.hotelLogoUrl,
       commissionCents: order.commissionCents,
       priceCents: order.priceCents,
     });

@@ -19,6 +19,7 @@ interface BackData {
   recipientCity: string;
   recipientCountry: string;
   formatKey: "standard" | "standard-v" | "large" | "large-v";
+  logoUrl?: string | null;
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -60,6 +61,11 @@ function wrapText(text: string, maxChars: number): string[] {
 }
 
 // ── Landscape SVG (left: message, right: address) ────────────────────────────
+
+function buildLogoSvg(logoUrl: string | null | undefined, x: number, y: number, maxW: number, maxH: number): string {
+  if (!logoUrl) return "";
+  return `  <image href="${escapeXml(logoUrl)}" x="${x}" y="${y}" width="${maxW}" height="${maxH}" preserveAspectRatio="xMinYMid meet" opacity="0.85"/>`;
+}
 
 function buildLandscapeSvg(data: BackData, W: number, H: number): string {
   // Scale factor for wider panoramic format
@@ -117,6 +123,9 @@ function buildLandscapeSvg(data: BackData, W: number, H: number): string {
 
   <!-- LEFT: message body -->
 ${messageSvg}
+
+  <!-- LEFT: hotel logo (if provided) -->
+${buildLogoSvg(data.logoUrl, pad, H - pad - Math.round(80 * s) - Math.round(20 * s), Math.round(160 * s), Math.round(80 * s))}
 
   <!-- LEFT: footer -->
   <text x="${pad}" y="${H - pad}"
@@ -211,6 +220,9 @@ function buildPortraitSvg(data: BackData, W: number, H: number): string {
 
   <!-- TOP: message body -->
 ${messageSvg}
+
+  <!-- TOP: hotel logo (if provided) -->
+${buildLogoSvg(data.logoUrl, pad, divY - Math.round(pad * 0.5) - Math.round(80 * s) - Math.round(24 * s), Math.round(160 * s), Math.round(80 * s))}
 
   <!-- TOP: footer -->
   <text x="${pad}" y="${divY - Math.round(pad * 0.5)}"

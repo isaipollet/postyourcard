@@ -165,6 +165,18 @@ export default function HotelLandingPage() {
             </motion.h1>
           )}
 
+          {hotel?.logoUrl && (
+            <motion.img
+              src={hotel.logoUrl}
+              alt={hotel.name}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.28 }}
+              className="h-10 max-w-[160px] object-contain mt-3 drop-shadow-lg"
+              style={{ filter: "brightness(0) invert(1)" }}
+            />
+          )}
+
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
