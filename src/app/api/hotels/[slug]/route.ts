@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/lib/db";
 import { hotels } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -9,6 +10,7 @@ export async function GET(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
+  noStore(); // prevent Next.js from caching the Neon HTTP fetch
   const [hotel] = await db
     .select({
       name: hotels.name,
