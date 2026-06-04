@@ -19,7 +19,8 @@ interface BackData {
   recipientCity: string;
   recipientCountry: string;
   formatKey: "standard" | "standard-v" | "large" | "large-v";
-  logoUrl?: string | null;
+  logoUrl?: string | null;       // external URL — converted to data-URI before SVG build
+  logoDataUri?: string | null;   // base64 data-URI used inside SVG builders
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -62,9 +63,27 @@ function wrapText(text: string, maxChars: number): string[] {
 
 // ── Landscape SVG (left: message, right: address) ────────────────────────────
 
-function buildLogoSvg(logoUrl: string | null | undefined, x: number, y: number, maxW: number, maxH: number): string {
-  if (!logoUrl) return "";
-  return `  <image href="${escapeXml(logoUrl)}" x="${x}" y="${y}" width="${maxW}" height="${maxH}" preserveAspectRatio="xMinYMid meet" opacity="0.85"/>`;
+function buildLogoSvg(logoDataUri: string | null | undefined, x: number, y: number, maxW: number, maxH: number): string {
+  if (!logoDataUri) return "";
+  return `  <image href="${escapeXml(logoDataUri)}" x="${x}" y="${y}" width="${maxW}" height="${maxH}" preserveAspectRatio="xMinYMid meet" opacity="0.9"/>`;
+}
+
+/** Fetch an external image URL and return it as a base64 data-URI so it can be
+ *  embedded directly in the SVG — Cloudinary cannot fetch external URLs during
+ *  SVG→PNG conversion, so we must inline the image bytes. */
+async function fetchLogoAsDataUri(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) return null;
+    const contentType = res.headers.get("content-type") ?? "image/png";
+    const buffer = await res.arrayBuffer();
+    const b64 = Buffer.from(buffer).toString("base64");
+    // Normalise SVG mime type
+    const mime = contentType.includes("svg") ? "image/svg+xml" : contentType.split(";")[0];
+    return `data:${mime};base64,${b64}`;
+  } catch {
+    return null;
+  }
 }
 
 function buildLandscapeSvg(data: BackData, W: number, H: number): string {
@@ -159,7 +178,7 @@ ${messageSvg}
     letter-spacing="3">${escapeXml(data.recipientCountry.toUpperCase())}</text>
 
   <!-- BOTTOM-RIGHT: hotel logo -->
-${buildLogoSvg(data.logoUrl, W - pad - Math.round(220 * s), H - pad - Math.round(100 * s), Math.round(220 * s), Math.round(100 * s))}
+${buildLogoSvg(data.logoDataUri, W - pad - Math.round(220 * s), H - pad - Math.round(100 * s), Math.round(220 * s), Math.round(100 * s))}
 </svg>`;
 }
 
@@ -256,7 +275,7 @@ ${messageSvg}
     letter-spacing="3">${escapeXml(data.recipientCountry.toUpperCase())}</text>
 
   <!-- BOTTOM-RIGHT: hotel logo -->
-${buildLogoSvg(data.logoUrl, W - pad - Math.round(220 * s), H - pad - Math.round(100 * s), Math.round(220 * s), Math.round(100 * s))}
+${buildLogoSvg(data.logoDataUri, W - pad - Math.round(220 * s), H - pad - Math.round(100 * s), Math.round(220 * s), Math.round(100 * s))}
 </svg>`;
 }
 
@@ -286,6 +305,11 @@ function buildSvg(data: BackData): string {
  * Upload is idempotent: same `public_id` overwrites the previous version.
  */
 export async function generatePostcardBackUrl(data: BackData): Promise<string> {
+  // Pre-fetch logo as base64 data-URI so Cloudinary can embed it during SVG→PNG conversion
+  if (data.logoUrl && !data.logoDataUri) {
+    data = { ...data, logoDataUri: await fetchLogoAsDataUri(data.logoUrl) };
+  }
+
   const svgString = buildSvg(data);
   const base64 = Buffer.from(svgString, "utf8").toString("base64");
   const dataUri = `data:image/svg+xml;base64,${base64}`;
