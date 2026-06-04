@@ -170,14 +170,14 @@ export default function HotelLandingPage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.28 }}
-              className="mt-3 px-4 py-2 rounded-xl"
-              style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+              className="mt-4"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={hotel.logoUrl}
                 alt={hotel.name}
-                className="h-9 max-w-[140px] object-contain drop-shadow"
+                className="h-14 max-w-[200px] object-contain"
+                style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.5))" }}
               />
             </motion.div>
           )}
