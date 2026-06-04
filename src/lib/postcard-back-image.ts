@@ -305,25 +305,66 @@ function buildSvg(data: BackData): string {
  * Upload is idempotent: same `public_id` overwrites the previous version.
  */
 export async function generatePostcardBackUrl(data: BackData): Promise<string> {
-  // Pre-fetch logo as base64 data-URI so Cloudinary can embed it during SVG→PNG conversion
-  if (data.logoUrl && !data.logoDataUri) {
-    data = { ...data, logoDataUri: await fetchLogoAsDataUri(data.logoUrl) };
-  }
-
-  const svgString = buildSvg(data);
+  // Build the SVG without the logo (Cloudinary does not render <image> tags in SVGs)
+  const svgString = buildSvg({ ...data, logoDataUri: null });
   const base64 = Buffer.from(svgString, "utf8").toString("base64");
   const dataUri = `data:image/svg+xml;base64,${base64}`;
 
   // Safe public_id (no special chars)
   const publicId = `postyourcard-backs/${data.orderReference.replace(/[^a-zA-Z0-9_-]/g, "_")}-back`;
 
+  // Upload the base SVG → PNG
   const result = await cloudinary.uploader.upload(dataUri, {
     resource_type: "image",
     public_id: publicId,
     overwrite: true,
-    format: "png",          // Cloudinary converts SVG → PNG on ingest
+    format: "png",
     quality: 90,
   });
 
-  return result.secure_url;
+  // If no logo, return the plain back image
+  if (!data.logoUrl) return result.secure_url;
+
+  // ── Logo overlay via Cloudinary transformation ───────────────────────────────
+  // Upload the logo once under a stable public_id so it can be used as overlay.
+  // `overwrite: false` skips the upload if it already exists.
+  const logoPublicId = `postyourcard-logos/${Buffer.from(data.logoUrl).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(0, 40)}`;
+  try {
+    await cloudinary.uploader.upload(data.logoUrl, {
+      public_id: logoPublicId,
+      overwrite: false,
+      resource_type: "image",
+    });
+  } catch {
+    // already exists or fetch failed — continue anyway
+  }
+
+  // Determine print dimensions for this format so we can size the overlay
+  const dims: Record<BackData["formatKey"], { W: number; H: number }> = {
+    standard:     { W: 1748, H: 1240 },
+    "standard-v": { W: 1240, H: 1748 },
+    large:        { W: 2480, H: 1169 },
+    "large-v":    { W: 1169, H: 2480 },
+  };
+  const { W } = dims[data.formatKey];
+  const logoW = Math.round(W * 0.13); // ~13% of card width
+
+  // Return URL with overlay applied bottom-right (gravity south_east)
+  const overlayUrl = cloudinary.url(publicId, {
+    transformation: [
+      {
+        overlay: logoPublicId.replace(/\//g, ":"), // Cloudinary uses : as path separator in overlays
+        gravity: "south_east",
+        x: 60,
+        y: 60,
+        width: logoW,
+        crop: "fit",
+      },
+    ],
+    format: "png",
+    quality: 90,
+    secure: true,
+  });
+
+  return overlayUrl;
 }
