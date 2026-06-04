@@ -124,9 +124,6 @@ function buildLandscapeSvg(data: BackData, W: number, H: number): string {
   <!-- LEFT: message body -->
 ${messageSvg}
 
-  <!-- LEFT: hotel logo (if provided) -->
-${buildLogoSvg(data.logoUrl, pad, H - pad - Math.round(80 * s) - Math.round(20 * s), Math.round(160 * s), Math.round(80 * s))}
-
   <!-- LEFT: footer -->
   <text x="${pad}" y="${H - pad}"
     font-family="Liberation Sans,Arial,Helvetica,sans-serif"
@@ -160,6 +157,9 @@ ${buildLogoSvg(data.logoUrl, pad, H - pad - Math.round(80 * s) - Math.round(20 *
     font-family="Liberation Sans,Arial,Helvetica,sans-serif"
     font-size="${szCountry}" font-weight="bold" fill="#1a1a1a"
     letter-spacing="3">${escapeXml(data.recipientCountry.toUpperCase())}</text>
+
+  <!-- BOTTOM-RIGHT: hotel logo -->
+${buildLogoSvg(data.logoUrl, W - pad - Math.round(220 * s), H - pad - Math.round(100 * s), Math.round(220 * s), Math.round(100 * s))}
 </svg>`;
 }
 
@@ -221,9 +221,6 @@ function buildPortraitSvg(data: BackData, W: number, H: number): string {
   <!-- TOP: message body -->
 ${messageSvg}
 
-  <!-- TOP: hotel logo (if provided) -->
-${buildLogoSvg(data.logoUrl, pad, divY - Math.round(pad * 0.5) - Math.round(80 * s) - Math.round(24 * s), Math.round(160 * s), Math.round(80 * s))}
-
   <!-- TOP: footer -->
   <text x="${pad}" y="${divY - Math.round(pad * 0.5)}"
     font-family="Liberation Sans,Arial,Helvetica,sans-serif"
@@ -257,6 +254,9 @@ ${buildLogoSvg(data.logoUrl, pad, divY - Math.round(pad * 0.5) - Math.round(80 *
     font-family="Liberation Sans,Arial,Helvetica,sans-serif"
     font-size="${szCountry}" font-weight="bold" fill="#1a1a1a"
     letter-spacing="3">${escapeXml(data.recipientCountry.toUpperCase())}</text>
+
+  <!-- BOTTOM-RIGHT: hotel logo -->
+${buildLogoSvg(data.logoUrl, W - pad - Math.round(220 * s), H - pad - Math.round(100 * s), Math.round(220 * s), Math.round(100 * s))}
 </svg>`;
 }
 
