@@ -349,3 +349,64 @@ export async function generatePostcardBackUrl(data: BackData): Promise<string> {
 
   return result.secure_url;
 }
+
+/**
+ * Takes the cropped front photo (already in Cloudinary) and overlays the hotel
+ * logo in the top-left corner using Cloudinary URL transformations.
+ *
+ * Returns a new Cloudinary URL with the logo baked in, ready to attach as the
+ * print-ready front. Falls back to the original URL if anything fails.
+ */
+export async function generateFrontWithLogoUrl(
+  croppedImageUrl: string,
+  logoUrl: string
+): Promise<string> {
+  try {
+    // 1. Upload logo to Cloudinary as PNG (idempotent — same hash = same public_id)
+    const logoHash = Buffer.from(logoUrl)
+      .toString("base64")
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(0, 40);
+    const logoPublicId = `postyourcard-logos/${logoHash}`;
+
+    await cloudinary.uploader.upload(logoUrl, {
+      public_id: logoPublicId,
+      overwrite: false,   // skip if already uploaded
+      resource_type: "image",
+      format: "png",
+    });
+
+    // 2. Extract the photo's public_id from its Cloudinary URL.
+    //    URL shape: https://res.cloudinary.com/{cloud}/image/upload/{version?}/{publicId}.{ext}
+    const match = croppedImageUrl.match(/\/image\/upload\/(?:v\d+\/)?(.+?)(?:\.[a-z]+)?$/);
+    if (!match) return croppedImageUrl;
+    const photoPublicId = match[1];
+
+    // 3. Build a Cloudinary transformation URL:
+    //    overlay the logo top-left (north_west), max width 220px, 85% opacity.
+    //    Cloudinary overlay syntax: replace '/' with ':' in public_id.
+    const overlayId = logoPublicId.replace(/\//g, ":");
+    const transformedUrl = cloudinary.url(photoPublicId, {
+      transformation: [
+        {
+          overlay: overlayId,
+          gravity: "north_west",
+          x: 30,
+          y: 30,
+          width: 220,
+          crop: "fit",
+          opacity: 85,
+        },
+        { flags: "layer_apply" },
+      ],
+      format: "jpg",
+      quality: 90,
+      secure: true,
+    });
+
+    return transformedUrl;
+  } catch (err) {
+    console.error("[postcard-front] logo overlay failed:", err);
+    return croppedImageUrl; // fallback to original
+  }
+}

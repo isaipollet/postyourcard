@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { generatePostcardBackUrl } from "@/lib/postcard-back-image";
+import { generatePostcardBackUrl, generateFrontWithLogoUrl } from "@/lib/postcard-back-image";
 
 const resend = new Resend(process.env.RESEND_API_KEY ?? "re_placeholder");
 
@@ -40,6 +40,16 @@ export async function sendOrderEmails(
 
   const cityFromHotel = (data.hotelCity ?? "").trim();
   const totalPaid = `€&nbsp;${price.replace(".", ",")}`;
+
+  // Generate front photo with logo overlay (top-left) — fail-safe
+  let frontUrl: string = data.croppedImageUrl;
+  if (data.hotelLogoUrl) {
+    try {
+      frontUrl = await generateFrontWithLogoUrl(data.croppedImageUrl, data.hotelLogoUrl);
+    } catch (err) {
+      console.error("Failed to generate front with logo overlay:", err);
+    }
+  }
 
   // Generate postcard back PNG via Cloudinary — fail-safe (email still sends without it)
   let backPngUrl: string | null = null;
@@ -85,10 +95,10 @@ export async function sendOrderEmails(
       to: OWNER_EMAIL,
       subject: `[PRINT] ${data.orderReference} — ${data.format} for ${data.recipientCity}, ${data.recipientCountry}`,
       attachments: [
-        // Front photo — fetched by Resend from Cloudinary
+        // Front photo — with logo overlay if hotel has a logo
         {
           filename: `${safeRef}-front.jpg`,
-          path: data.croppedImageUrl,
+          path: frontUrl,
           contentType: "image/jpeg",
         },
         // Back side — Cloudinary PNG URL (only if generation succeeded)
