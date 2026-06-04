@@ -166,15 +166,20 @@ export default function HotelLandingPage() {
           )}
 
           {hotel?.logoUrl && (
-            <motion.img
-              src={hotel.logoUrl}
-              alt={hotel.name}
+            <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.28 }}
-              className="h-10 max-w-[160px] object-contain mt-3 drop-shadow-lg"
-              style={{ filter: "brightness(0) invert(1)" }}
-            />
+              className="mt-3 px-4 py-2 rounded-xl"
+              style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={hotel.logoUrl}
+                alt={hotel.name}
+                className="h-9 max-w-[140px] object-contain drop-shadow"
+              />
+            </motion.div>
           )}
 
           <motion.p
