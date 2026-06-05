@@ -29,5 +29,11 @@ export async function GET(
     return NextResponse.json({ error: "Hotel not found" }, { status: 404 });
   }
 
-  return NextResponse.json(hotel);
+  return NextResponse.json(hotel, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate",
+      "CDN-Cache-Control": "no-store",
+      "Netlify-CDN-Cache-Control": "no-store",
+    },
+  });
 }
