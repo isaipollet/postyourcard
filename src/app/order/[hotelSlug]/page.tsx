@@ -31,7 +31,7 @@ const FORMAT_OPTIONS = [
         key: "standard" as PostcardFormat,
         labelKey: "format.orientation.horizontal" as const,
         dims: "148 × 105 mm",
-        imageUrl: "https://images.unsplash.com/photo-1572895854902-117546c75fb3?w=360&h=240&fit=crop&crop=center&q=85",
+        imageUrl: "https://res.cloudinary.com/dz8wrj1xz/image/upload/v1782331964/postyourcard-demo/standard-h.jpg",
         shapeW: 22,
         shapeH: 16,
       },
@@ -39,7 +39,7 @@ const FORMAT_OPTIONS = [
         key: "standard-v" as PostcardFormat,
         labelKey: "format.orientation.vertical" as const,
         dims: "105 × 148 mm",
-        imageUrl: "https://images.unsplash.com/photo-1601961208755-3519c8a31ded?w=240&h=340&fit=crop&crop=center&q=85",
+        imageUrl: "https://res.cloudinary.com/dz8wrj1xz/image/upload/v1782331967/postyourcard-demo/standard-v.jpg",
         shapeW: 16,
         shapeH: 22,
       },
@@ -54,7 +54,7 @@ const FORMAT_OPTIONS = [
         key: "large" as PostcardFormat,
         labelKey: "format.orientation.horizontal" as const,
         dims: "210 × 99 mm",
-        imageUrl: "https://images.unsplash.com/photo-1578412663269-214d1df31cd8?w=400&h=188&fit=crop&crop=center&q=85",
+        imageUrl: "https://res.cloudinary.com/dz8wrj1xz/image/upload/v1782331972/postyourcard-demo/large-h.jpg",
         shapeW: 28,
         shapeH: 13,
       },
@@ -62,7 +62,7 @@ const FORMAT_OPTIONS = [
         key: "large-v" as PostcardFormat,
         labelKey: "format.orientation.vertical" as const,
         dims: "99 × 210 mm",
-        imageUrl: "https://images.unsplash.com/photo-1588008306645-7a6d62063f55?w=240&h=400&fit=crop&crop=center&q=85",
+        imageUrl: "https://res.cloudinary.com/dz8wrj1xz/image/upload/v1782331976/postyourcard-demo/large-v.jpg",
         shapeW: 13,
         shapeH: 28,
       },
@@ -375,9 +375,9 @@ export default function HotelLandingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="flex items-center justify-center gap-5 mt-5 py-3"
+            className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-5 py-3"
           >
-            {[t("trust.shippingIncluded"), t("trust.worldwide"), t("trust.printedIn24h")].map((text) => (
+            {[t("trust.shippingIncluded"), t("trust.worldwide"), t("trust.printedIn24h"), t("trust.paper350g")].map((text) => (
               <div key={text} className="flex items-center gap-1 text-[10px] text-sand-500 font-medium">
                 <svg className="w-3 h-3 text-teal/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
