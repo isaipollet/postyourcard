@@ -45,6 +45,7 @@ export default function PrintQueuePage() {
   const [orders, setOrders] = useState<PrintOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+  const [batchSending, setBatchSending] = useState(false);
   const [formatFilter, setFormatFilter] = useState<"all" | "standard" | "large">("all");
   const [todayOnly, setTodayOnly] = useState(false);
 
@@ -91,6 +92,40 @@ export default function PrintQueuePage() {
       toast.error("Failed to update status");
     } finally {
       setActionLoadingId(null);
+    }
+  };
+
+  const sendBatchToPrinter = async () => {
+    const queuedCount = orders.filter((o) => o.status === "paid").length;
+    if (queuedCount === 0) {
+      toast.error("No new cards to batch");
+      return;
+    }
+    if (!confirm(`Send ${queuedCount} card${queuedCount !== 1 ? "s" : ""} to the printer as one batch?`)) {
+      return;
+    }
+    setBatchSending(true);
+    hapticTap();
+    try {
+      const res = await fetch("/api/admin/orders/print-batch", { method: "POST" });
+      if (!res.ok) throw new Error();
+      const result = await res.json();
+      hapticSuccess();
+      if (result.sent > 0) {
+        toast.success(
+          `Batch ${result.batchRef}: ${result.sent} card${result.sent !== 1 ? "s" : ""} emailed to ${result.recipient}`
+        );
+      } else {
+        toast.error("Batch sent nothing — check the queue");
+      }
+      if (result.skipped?.length) {
+        toast.warning(`${result.skipped.length} order(s) skipped — they stay queued`);
+      }
+      await fetchQueue();
+    } catch {
+      toast.error("Failed to send batch to printer");
+    } finally {
+      setBatchSending(false);
     }
   };
 
@@ -183,6 +218,21 @@ export default function PrintQueuePage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
             </svg>
             Refresh
+          </button>
+          <button
+            onClick={sendBatchToPrinter}
+            disabled={batchSending || orders.filter((o) => o.status === "paid").length === 0}
+            className="px-4 py-2 rounded-xl bg-burgundy text-white text-sm font-medium hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-40 flex items-center gap-1.5"
+            style={{ backgroundColor: "#6B1F2A" }}
+          >
+            {batchSending ? (
+              <Spinner className="w-4 h-4" />
+            ) : (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+              </svg>
+            )}
+            Send batch to printer ({orders.filter((o) => o.status === "paid").length})
           </button>
           <button
             onClick={downloadAllPhotos}
