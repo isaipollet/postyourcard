@@ -56,6 +56,7 @@ export const translations: Record<Language, Dict> = {
     "trust.shippingIncluded": "Shipping included",
     "trust.worldwide": "Worldwide",
     "trust.printedIn24h": "Printed in 24h",
+    "trust.paper350g": "350g paper",
     "cta.choosePhoto": "Choose photo",
     "cta.selectFormat": "Select a format to continue",
 
@@ -183,6 +184,7 @@ export const translations: Record<Language, Dict> = {
     "trust.shippingIncluded": "Verzending inbegrepen",
     "trust.worldwide": "Wereldwijd",
     "trust.printedIn24h": "Geprint in 24u",
+    "trust.paper350g": "350g papier",
     "cta.choosePhoto": "Kies foto",
     "cta.selectFormat": "Kies een formaat om verder te gaan",
 
@@ -306,6 +308,7 @@ export const translations: Record<Language, Dict> = {
     "trust.shippingIncluded": "Envoi inclus",
     "trust.worldwide": "Monde entier",
     "trust.printedIn24h": "Imprimé en 24h",
+    "trust.paper350g": "Papier 350g",
     "cta.choosePhoto": "Choisir une photo",
     "cta.selectFormat": "Choisissez un format pour continuer",
 
@@ -424,6 +427,7 @@ export const translations: Record<Language, Dict> = {
     "trust.shippingIncluded": "Envío incluido",
     "trust.worldwide": "En todo el mundo",
     "trust.printedIn24h": "Impreso en 24h",
+    "trust.paper350g": "Papel 350g",
     "cta.choosePhoto": "Elegir foto",
     "cta.selectFormat": "Elige un formato para continuar",
 
@@ -542,6 +546,7 @@ export const translations: Record<Language, Dict> = {
     "trust.shippingIncluded": "包含邮费",
     "trust.worldwide": "全球邮寄",
     "trust.printedIn24h": "24小时内打印",
+    "trust.paper350g": "350克纸张",
     "cta.choosePhoto": "选择照片",
     "cta.selectFormat": "请选择尺寸继续",
 

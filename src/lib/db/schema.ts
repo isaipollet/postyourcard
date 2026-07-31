@@ -31,7 +31,7 @@ export const hotels = pgTable("hotels", {
   active: boolean("active").notNull().default(true),
   stripeAccountId: text("stripe_account_id"),
   stripeOnboardingComplete: boolean("stripe_onboarding_complete").default(false),
-  commissionPct: numeric("commission_pct").notNull().default("0.20"),
+  commissionPct: numeric("commission_pct").notNull().default("0.15"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

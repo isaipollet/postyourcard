@@ -81,7 +81,7 @@ export async function POST(request: Request) {
   }
 
   // Calculate commission based on hotel-specific percentage
-  const commissionPct = parseFloat(hotel.commissionPct || "0.20");
+  const commissionPct = parseFloat(hotel.commissionPct || "0.15");
   const commissionCents = Math.round(PRICE_CENTS * commissionPct);
 
   // Generate order reference

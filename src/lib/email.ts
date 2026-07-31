@@ -164,7 +164,7 @@ export async function sendOrderEmails(
             <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
               <tr><td style="padding: 4px 8px 4px 0; color: #666;">Customer email</td><td style="padding: 4px 0;"><a href="mailto:${data.customerEmail}">${data.customerEmail}</a></td></tr>
               <tr><td style="padding: 4px 8px 4px 0; color: #666;">Total paid</td><td style="padding: 4px 0;">&euro;${price}</td></tr>
-              <tr><td style="padding: 4px 8px 4px 0; color: #666;">Hotel commission</td><td style="padding: 4px 0;">&euro;${commission} (${data.hotelName})</td></tr>
+              ${data.commissionCents > 0 ? `<tr><td style="padding: 4px 8px 4px 0; color: #666;">Hotel commission</td><td style="padding: 4px 0;">&euro;${commission} (${data.hotelName})</td></tr>` : ""}
               <tr><td style="padding: 4px 8px 4px 0; color: #666;">Order reference</td><td style="padding: 4px 0; font-family: monospace;">${data.orderReference}</td></tr>
             </table>
           </div>
